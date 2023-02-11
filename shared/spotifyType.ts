@@ -1,38 +1,38 @@
 export enum searchType {
-    artist="artist",
-    album="album",
-    track="track",
+  artist = "artist",
+  album = "album",
+  track = "track",
 }
 
 type PaginatedData<T> = {
-    offset: number,
-    total: number,
-    items:T[]
+  offset: number
+  total: number
+  items: T[]
 }
 
 export type Artist = {
-    name: string
-    id: string
+  name: string
+  id: string
 }
 
 export type Album = {
-    id: string
-    name: string
-    artists: Artist[]
+  id: string
+  name: string
+  artists: Artist[]
 }
 
 export type Track = {
-    album?:Album
-    artists:Artist[]
-    id: string
-    name: string
-    duration_ms: number
+  album?: Album
+  artists: Artist[]
+  id: string
+  name: string
+  duration_ms: number
 }
 
 export type SearchResponse = {
-    tracks: PaginatedData<Track>
-    artists: PaginatedData<Artist>
-    albums: PaginatedData<Album>
+  tracks: PaginatedData<Track>
+  artists: PaginatedData<Artist>
+  albums: PaginatedData<Album>
 }
 
 export type ArtistAlbums = PaginatedData<Album>
