@@ -10,19 +10,31 @@ type PaginatedData<T> = {
   items: T[]
 }
 
+type Image = {
+  url: string
+  height: number
+  width: number
+}
+
 export type Artist = {
   name: string
   id: string
+  image?: string
+  images?: Image[]
 }
 
 export type Album = {
   id: string
   name: string
+  image?: string
+  images?: Image[]
   artists: Artist[]
 }
 
 export type Track = {
   album?: Album
+  image?: string
+  images?: Image[]
   artists: Artist[]
   id: string
   name: string

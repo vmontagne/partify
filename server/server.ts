@@ -41,6 +41,7 @@ const searchRequest = async (ws: WebSocket, query: string) => {
       items: data.albums.items.map((album) => ({
         id: album.id,
         name: album.name,
+        image: album.images?.sort((a, b) => b.width - a.width)[0].url,
         artists: album.artists.map((artist) => ({
           name: artist.name,
           id: artist.id,
@@ -53,6 +54,7 @@ const searchRequest = async (ws: WebSocket, query: string) => {
       items: data.artists.items.map((artist) => ({
         id: artist.id,
         name: artist.name,
+        image: artist.images?.sort((a, b) => b.width - a.width)[0].url,
       })),
     },
     tracks: {
@@ -73,6 +75,7 @@ const searchRequest = async (ws: WebSocket, query: string) => {
         })),
         name: track.name,
         duration_ms: track.duration_ms,
+        image: track.images?.sort((a, b) => b.width - a.width)[0].url,
       })),
     },
   }
@@ -90,6 +93,7 @@ const getArtistAlbums = async (ws: WebSocket, artistId: string) => {
       items: data.items.map((album) => ({
         id: album.id,
         name: album.name,
+        image: album.images?.sort((a, b) => a.width - b.width)[0].url,
         artists: album.artists.map((artist) => ({
           id: artist.id,
           name: artist.name,
