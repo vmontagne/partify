@@ -4,7 +4,7 @@ import {
   AlbumTracks,
   ArtistAlbums,
   SearchResponse,
-} from "../shared/spotifyType"
+} from "../src/shared/spotifyType"
 
 import config from "../env.json"
 

@@ -8,7 +8,7 @@ import {
   SearchResponseMessage,
   GetArtistAlbumsResponseMessage,
   GetAlbumTracksResponseMessage,
-} from "../shared/messages"
+} from "../src/shared/messages"
 import { spotify } from "./spotify"
 
 const wss = new WebSocketServer({
@@ -41,7 +41,7 @@ const searchRequest = async (ws: WebSocket, query: string) => {
       items: data.albums.items.map((album) => ({
         id: album.id,
         name: album.name,
-        image: album.images?.sort((a, b) => b.width - a.width)[0].url,
+        image: album.images?.sort((a, b) => b.width - a.width)[0]?.url,
         artists: album.artists.map((artist) => ({
           name: artist.name,
           id: artist.id,
@@ -54,7 +54,7 @@ const searchRequest = async (ws: WebSocket, query: string) => {
       items: data.artists.items.map((artist) => ({
         id: artist.id,
         name: artist.name,
-        image: artist.images?.sort((a, b) => b.width - a.width)[0].url,
+        image: artist.images?.sort((a, b) => b.width - a.width)[0]?.url,
       })),
     },
     tracks: {
@@ -75,7 +75,7 @@ const searchRequest = async (ws: WebSocket, query: string) => {
         })),
         name: track.name,
         duration_ms: track.duration_ms,
-        image: track.images?.sort((a, b) => b.width - a.width)[0].url,
+        image: track.images?.sort((a, b) => b.width - a.width)[0]?.url,
       })),
     },
   }
@@ -130,9 +130,6 @@ const getAlbumTracks = async (ws: WebSocket, albumId: string) => {
 
 wss.on("connection", (ws: WebSocket) => {
   console.log("new client connected")
-
-  // sending message to client
-  ws.send("Welcome, you are connected!")
 
   //on message from client
   ws.on("message", (data) => {
