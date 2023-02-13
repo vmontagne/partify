@@ -15,11 +15,10 @@ const Title = styled("p")(({ theme }) => ({
 
 export const SearchResults = () => {
   const { albums, tracks, artists } = useAppSelector((state) => state.search)
-  console.log(albums)
   return (
     <Grid container>
       {tracks.length > 0 && (
-        <Grid>
+        <Grid xs={12}>
           <Stack spacing={2}>
             <Title>Musiques</Title>
             {tracks.map((track) => (
@@ -29,7 +28,7 @@ export const SearchResults = () => {
         </Grid>
       )}
       {albums.length > 0 && (
-        <Grid>
+        <Grid xs={12}>
           <Stack spacing={2}>
             <Title>Albums</Title>
             {albums.map((album) => (
@@ -39,7 +38,7 @@ export const SearchResults = () => {
         </Grid>
       )}
       {artists.length > 0 && (
-        <Grid>
+        <Grid xs={12}>
           <Stack spacing={2}>
             <Title>Artistes</Title>
             {artists.map((artist) => (

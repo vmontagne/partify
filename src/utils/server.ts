@@ -1,9 +1,10 @@
 import { useEffect } from "react"
 import { Message, messageType } from "../shared/messages"
 import { useAppDispatch } from "../store"
+import { addTracks } from "../store/album"
+import { addAlbums } from "../store/artist"
 import { searchResponse } from "../store/search"
 import { setUuid } from "../store/user"
-import { hasOwnProperty } from "./generics"
 
 const ws = new WebSocket("ws://localhost:8080")
 
@@ -31,6 +32,20 @@ export const useServer = () => {
             })
           )
           break
+        case messageType.GET_ALBUM_TRACKS_RESPONSE:
+          dispatch(
+            addTracks({
+              tracks: data.tracks.items,
+            })
+          )
+          break
+        case messageType.GET_ARTIST_ALBUMS_RESPONSE:
+          dispatch(
+            addAlbums({
+              albums: data.albums.items,
+            })
+          )
+          break
         default:
           console.log("message untreated", data)
       }
@@ -39,5 +54,5 @@ export const useServer = () => {
     return () => {
       ws.removeEventListener("message", listener)
     }
-  }, [])
+  }, [dispatch])
 }

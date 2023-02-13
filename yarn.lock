@@ -9944,6 +9944,7 @@ __metadata:
     "@types/uuid": ^9.0.0
     "@types/ws": ^8.5.4
     eslint: ^8.34.0
+    eslint-config-react-app: ^7.0.1
     esutils: ^2.0.3
     luxon: ^3.2.1
     nodemon: ^2.0.20

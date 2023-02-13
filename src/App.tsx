@@ -3,6 +3,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Home } from "./home/home"
+import { Album } from "./album/album"
+import { Artist } from "./artist/artist"
 import { useServer } from "./utils/server"
 import "./App.css"
 
@@ -16,6 +18,14 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/album",
+    element: <Album />,
+  },
+  {
+    path: "/artist",
+    element: <Artist />,
   },
 ])
 

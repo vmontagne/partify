@@ -3,11 +3,15 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
 
 import userReducer from "./user"
 import searchReducer from "./search"
+import albumReducer from "./album"
+import artistReducer from "./artist"
 
 const store = configureStore({
   reducer: {
     user: userReducer,
     search: searchReducer,
+    album: albumReducer,
+    artist: artistReducer,
   },
 })
 

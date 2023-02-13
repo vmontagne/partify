@@ -37,7 +37,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prettier": "prettier --write src server",
-    "lint": "eslint ."
+    "lint": "eslint src/**/*.{ts,tsx,js}"
   },
   "eslintConfig": {
     "extends": [
@@ -61,6 +61,7 @@
     "@types/testing-library__jest-dom": "^5.14.5",
     "@types/uuid": "^9.0.0",
     "@types/ws": "^8.5.4",
+    "eslint-config-react-app": "^7.0.1",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.4",
     "ts-node": "^10.9.1"

@@ -15,13 +15,13 @@ export const Home = ({ ...props }) => {
       return
     }
     dispatch(getUuid())
-  }, [])
+  }, [uuid, loading, dispatch])
   return (
     <Grid container spacing={2}>
-      <Grid>
+      <Grid xs={12}>
         <Search />
       </Grid>
-      <Grid>
+      <Grid xs={12}>
         <SearchResults />
       </Grid>
     </Grid>

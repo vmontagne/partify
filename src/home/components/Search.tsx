@@ -2,6 +2,7 @@ import { useState } from "react"
 import TextField from "@mui/material/TextField"
 import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
+import Grid from "@mui/material/Unstable_Grid2"
 import { useAppDispatch, useAppSelector } from "../../store"
 import { searchRequest } from "../../store/search"
 
@@ -16,20 +17,25 @@ export const Search = () => {
     dispatch(searchRequest({ query: value }))
   }
   return (
-    <>
-      <TextField
-        label="Recherche"
-        variant="standard"
-        value={value}
-        onChange={handleChange}
-      />
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <Button variant="outlined" onClick={handleClick}>
-          Go
-        </Button>
-      )}
-    </>
+    <Grid container>
+      <Grid xs display="flex" alignItems="center" justifyContent="center">
+        <TextField
+          label="Recherche"
+          variant="standard"
+          fullWidth
+          value={value}
+          onChange={handleChange}
+        />
+      </Grid>
+      <Grid xs={3} display="flex" alignItems="center" justifyContent="center">
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <Button variant="outlined" onClick={handleClick}>
+            Go
+          </Button>
+        )}
+      </Grid>
+    </Grid>
   )
 }
