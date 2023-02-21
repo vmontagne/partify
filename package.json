@@ -32,6 +32,7 @@
   },
   "scripts": {
     "server": "nodemon server/server.ts",
+    "server-static": "ts-node server/server.ts",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
