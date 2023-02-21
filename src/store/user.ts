@@ -5,11 +5,13 @@ import { messageType } from "../shared/messages"
 interface User {
   uuid: string | undefined
   loading: boolean
+  name: string | undefined
 }
 
 const initialState: User = {
   uuid: undefined,
   loading: false,
+  name: undefined,
 }
 
 export const userSlice = createSlice({

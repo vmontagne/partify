@@ -9,7 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import { useAppDispatch, useAppSelector } from "../store"
 import { loadTracks } from "../store/album"
 import { Image } from "../common/Image"
-import { Track } from "../home/components/Track"
+import { Track } from "../search/components/Track"
 
 const Title = styled("p")(() => ({
   fontSize: "14px",
@@ -31,7 +31,7 @@ export const Album = () => {
   const navigate = useNavigate()
   useEffect(() => {
     dispatch(loadTracks())
-  }, [id])
+  }, [dispatch, id])
 
   const handleClick = () => {
     // TODO : clean store
@@ -60,7 +60,7 @@ export const Album = () => {
         {tracks.length > 0 && (
           <Stack spacing={2}>
             {tracks.map((track) => (
-              <Track track={track} key={track.id} />
+              <Track track={{ ...track, image }} key={track.id} />
             ))}
           </Stack>
         )}

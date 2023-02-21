@@ -5,6 +5,7 @@ import userReducer from "./user"
 import searchReducer from "./search"
 import albumReducer from "./album"
 import artistReducer from "./artist"
+import playlistReducer from "./playlist"
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     search: searchReducer,
     album: albumReducer,
     artist: artistReducer,
+    playlist: playlistReducer,
   },
 })
 

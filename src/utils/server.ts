@@ -3,10 +3,16 @@ import { Message, messageType } from "../shared/messages"
 import { useAppDispatch } from "../store"
 import { addTracks } from "../store/album"
 import { addAlbums } from "../store/artist"
+import { setItems } from "../store/playlist"
 import { searchResponse } from "../store/search"
 import { setUuid } from "../store/user"
 
-const ws = new WebSocket("ws://localhost:8080")
+let ws = new WebSocket("ws://localhost:8080")
+
+ws.addEventListener("error", () => {
+  // TODO ask the user to do something instead of doing it alone ....
+  setTimeout(() => window.location.reload(), 1000)
+})
 
 export const isReady = () => ws.readyState === WebSocket.OPEN
 
@@ -43,6 +49,13 @@ export const useServer = () => {
           dispatch(
             addAlbums({
               albums: data.albums.items,
+            })
+          )
+          break
+        case messageType.PLAYLIST_DATA:
+          dispatch(
+            setItems({
+              items: data.items,
             })
           )
           break

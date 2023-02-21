@@ -6,7 +6,7 @@ import Grid from "@mui/material/Unstable_Grid2"
 import { useAppDispatch, useAppSelector } from "../../store"
 import { searchRequest } from "../../store/search"
 
-export const Search = () => {
+export const SearchBar = () => {
   const dispatch = useAppDispatch()
   const loading = useAppSelector((state) => state.search.loading)
   const [value, setValue] = useState("")

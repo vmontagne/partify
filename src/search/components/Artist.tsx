@@ -1,7 +1,6 @@
 import Paper from "@mui/material/Paper"
 import Grid from "@mui/material/Unstable_Grid2"
 import ManageSearchIcon from "@mui/icons-material/ManageSearch"
-import IconButton from "@mui/material/IconButton"
 import { styled } from "@mui/material/styles"
 import { Image } from "../../common/Image"
 import { Artist as ArtistType } from "../../shared/spotifyType"
@@ -27,7 +26,7 @@ export const Artist = ({ artist }: Props) => {
     navigate("/artist")
   }
   return (
-    <Paper>
+    <Paper onClick={handleClick}>
       <Grid container>
         <Grid xs={2} display="flex" alignItems="center">
           <Image src={artist.image} />
@@ -36,9 +35,7 @@ export const Artist = ({ artist }: Props) => {
           <Title>{artist.name}</Title>
         </Grid>
         <Grid xs={2} display="flex" alignItems="center" justifyContent="center">
-          <IconButton onClick={handleClick} size="small">
-            <ManageSearchIcon />
-          </IconButton>
+          <ManageSearchIcon />
         </Grid>
       </Grid>
     </Paper>

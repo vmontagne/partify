@@ -8,9 +8,8 @@ import Stack from "@mui/material/Stack"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import { useAppDispatch, useAppSelector } from "../store"
 import { Image } from "../common/Image"
-import { Track } from "../home/components/Track"
 import { loadAlbums } from "../store/artist"
-import { Album } from "../home/components/Album"
+import { Album } from "../search/components/Album"
 
 const Title = styled("p")(() => ({
   fontSize: "14px",
@@ -26,7 +25,7 @@ export const Artist = () => {
   const navigate = useNavigate()
   useEffect(() => {
     dispatch(loadAlbums())
-  }, [id])
+  }, [dispatch, id])
 
   const handleClick = () => {
     // TODO : clean store

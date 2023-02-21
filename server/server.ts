@@ -8,8 +8,13 @@ import {
   SearchResponseMessage,
   GetArtistAlbumsResponseMessage,
   GetAlbumTracksResponseMessage,
+  ReassignUuidRequestMessage,
+  ReassignUuidResponseMessage,
+  PlaylistDataMessage,
 } from "../src/shared/messages"
 import { spotify } from "./spotify"
+import { playlist } from "./playlist"
+import { Track } from "../src/shared/spotifyType"
 
 const wss = new WebSocketServer({
   port: process.env.WSS_PORT ? parseInt(process.env.WSS_PORT) : 8080,
@@ -17,17 +22,40 @@ const wss = new WebSocketServer({
 })
 
 const clients: {
-  [key: string]: WebSocket
+  [key: string]: {
+    ws: WebSocket
+    name: string
+  }
 } = {}
 
 const getUuid = (ws: WebSocket, message: GetUuidMessage) => {
   const uuid = uuidv4()
-  clients[uuid] = ws
+  clients[uuid] = { ws, name: uuid }
   const data: SetUuidMessage = {
     type: messageType.SET_UUID,
     uuid,
   }
   ws.send(JSON.stringify(data))
+}
+
+const reassingUuid = (ws: WebSocket, message: ReassignUuidRequestMessage) => {
+  if (!(message.uuid in clients)) {
+    clients[message.uuid] = {
+      ws: ws,
+      name: message.name,
+    }
+  } else {
+    clients[message.uuid].ws = ws
+    clients[message.uuid].name = message.name
+  }
+  const response: ReassignUuidResponseMessage = {
+    type: messageType.REASSIGN_UUID_RESPONSE,
+    user: {
+      uuid: message.uuid,
+      name: message.name,
+    },
+  }
+  ws.send(JSON.stringify(response))
 }
 
 const searchRequest = async (ws: WebSocket, query: string) => {
@@ -75,7 +103,7 @@ const searchRequest = async (ws: WebSocket, query: string) => {
         })),
         name: track.name,
         duration_ms: track.duration_ms,
-        image: track.images?.sort((a, b) => b.width - a.width)[0]?.url,
+        image: track.album?.images?.sort((a, b) => b.width - a.width)[0]?.url,
       })),
     },
   }
@@ -127,6 +155,31 @@ const getAlbumTracks = async (ws: WebSocket, albumId: string) => {
 
   ws.send(JSON.stringify(response))
 }
+const addTrack = (ws: WebSocket, track: Track) => {
+  const uuids = Object.keys(clients)
+  uuids.forEach((uuid) => {
+    if (ws === clients[uuid].ws) {
+      playlist.addTrack(track, { uuid, name: clients[uuid].name })
+      broadcastPlaylist()
+      return
+    }
+  })
+}
+
+const broadcastPlaylist = () => {
+  const items = playlist.getItems(10)
+  const data: PlaylistDataMessage = {
+    type: messageType.PLAYLIST_DATA,
+    items,
+  }
+  const encodedData = JSON.stringify(data)
+  wss.clients.forEach((client) => {
+    if (client.readyState !== WebSocket.OPEN) {
+      return
+    }
+    client.send(encodedData)
+  })
+}
 
 wss.on("connection", (ws: WebSocket) => {
   console.log("new client connected")
@@ -138,6 +191,9 @@ wss.on("connection", (ws: WebSocket) => {
       case messageType.GET_UUID:
         getUuid(ws, json)
         break
+      case messageType.REASSIGN_UUID_REQUEST:
+        reassingUuid(ws, json)
+        break
       case messageType.SEARCH_REQUEST:
         searchRequest(ws, json.query)
         break
@@ -146,6 +202,12 @@ wss.on("connection", (ws: WebSocket) => {
         break
       case messageType.GET_ALBUM_TRACKS_REQUEST:
         getAlbumTracks(ws, json.albumId)
+        break
+      case messageType.GET_ALBUM_TRACKS_REQUEST:
+        getAlbumTracks(ws, json.albumId)
+        break
+      case messageType.ADD_SONG_REQUEST:
+        addTrack(ws, json.track)
         break
       default:
         console.log("message unknown", json)
