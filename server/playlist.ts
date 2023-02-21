@@ -20,9 +20,9 @@ class Playlist {
   private sortItems() {
     this.playlistItems.sort((a, b) => {
       if (a.addedBy.length - b.addedBy.length !== 0) {
-        return a.addedBy.length - b.addedBy.length
+        return b.addedBy.length - a.addedBy.length
       }
-      return a.lastAdd > b.lastAdd ? 1 : -1
+      return a.lastAdd > b.lastAdd ? -1 : 1
     })
   }
 

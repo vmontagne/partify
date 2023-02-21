@@ -7,6 +7,7 @@ import { Track as TrackType } from "../../shared/spotifyType"
 import { useAppDispatch } from "../../store"
 import { addTrack } from "../../store/playlist"
 import { useNavigate } from "react-router-dom"
+import { clean } from "../../store/search"
 
 type Props = {
   track: TrackType
@@ -29,7 +30,8 @@ export const Track = ({ track }: Props) => {
   const navigate = useNavigate()
   const handleClick = () => {
     dispatch(addTrack(track))
-    navigate("/")
+    dispatch(clean())
+    navigate("/", { replace: true })
   }
   return (
     <Paper onClick={handleClick}>

@@ -31,9 +31,21 @@ export const userSlice = createSlice({
       state.loading = false
       state.uuid = action.payload.uuid
     },
+    reassignUuid: (state, action: PayloadAction<{ name: string }>) => {
+      state.name = action.payload.name
+      console.log(state.uuid)
+      if (!state.uuid) {
+        return
+      }
+      send({
+        type: messageType.REASSIGN_UUID_REQUEST,
+        name: action.payload.name,
+        uuid: state.uuid,
+      })
+    },
   },
 })
 
-export const { getUuid, setUuid } = userSlice.actions
+export const { getUuid, setUuid, reassignUuid } = userSlice.actions
 
 export default userSlice.reducer

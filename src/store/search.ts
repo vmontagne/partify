@@ -21,6 +21,10 @@ export const searchSlice = createSlice({
   name: "search",
   initialState,
   reducers: {
+    clean: (state) => {
+      state = { loading: false, albums: [], tracks: [], artists: [] }
+      console.log("clen state", state)
+    },
     searchRequest: (state, action: PayloadAction<{ query: string }>) => {
       if (state.loading) {
         return
@@ -47,6 +51,6 @@ export const searchSlice = createSlice({
   },
 })
 
-export const { searchRequest, searchResponse } = searchSlice.actions
+export const { searchRequest, searchResponse, clean } = searchSlice.actions
 
 export default searchSlice.reducer
