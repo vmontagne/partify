@@ -11,6 +11,10 @@ import {
   ReassignUuidRequestMessage,
   ReassignUuidResponseMessage,
   PlaylistDataMessage,
+  AdminGetDevicesResponseMessage,
+  AdminSetDeviceResponseMessage,
+  AdminStartPlaybackResponseMessage,
+  AdminPausePlaybackResponseMessage,
 } from "../src/shared/messages"
 import { spotify } from "./spotify"
 import { playlist } from "./playlist"
@@ -181,6 +185,43 @@ const broadcastPlaylist = () => {
   })
 }
 
+const getDevices = async (ws: WebSocket) => {
+  const { devices } = await spotify.getDevices()
+  const data: AdminGetDevicesResponseMessage = {
+    type: messageType.ADMIN_GET_DEVICES_RESPONSE,
+    devices,
+  }
+  ws.send(JSON.stringify(data))
+}
+
+const setDevices = async (ws: WebSocket, deviceId: string) => {
+  await spotify.setDevice(deviceId)
+  const data: AdminSetDeviceResponseMessage = {
+    type: messageType.ADMIN_SET_DEVICE_RESPONSE,
+    ok: true,
+  }
+  ws.send(JSON.stringify(data))
+}
+
+const startPlayback = async (ws: WebSocket) => {
+  // TODO get current playlist status to start the playback
+  await spotify.startPlayback()
+  const data: AdminStartPlaybackResponseMessage = {
+    type: messageType.ADMIN_START_PLAYBACK_RESPONSE,
+    ok: true,
+  }
+  ws.send(JSON.stringify(data))
+}
+
+const pausePlayback = async (ws: WebSocket) => {
+  await spotify.pausePlayback()
+  const data: AdminPausePlaybackResponseMessage = {
+    type: messageType.ADMIN_PAUSE_PLAYBACK_RESPONSE,
+    ok: true,
+  }
+  ws.send(JSON.stringify(data))
+}
+
 wss.on("connection", (ws: WebSocket) => {
   console.log("new client connected")
 
@@ -208,6 +249,18 @@ wss.on("connection", (ws: WebSocket) => {
         break
       case messageType.ADD_SONG_REQUEST:
         addTrack(ws, json.track)
+        break
+      case messageType.ADMIN_GET_DEVICES_REQUEST:
+        getDevices(ws)
+        break
+      case messageType.ADMIN_SET_DEVICE_REQUEST:
+        setDevices(ws, json.deviceId)
+        break
+      case messageType.ADMIN_START_PLAYBACK_REQUEST:
+        startPlayback(ws)
+        break
+      case messageType.ADMIN_PAUSE_PLAYBACK_REQUEST:
+        pausePlayback(ws)
         break
       default:
         console.log("message unknown", json)

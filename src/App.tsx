@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Home } from "./home/home"
+import { Admin } from "./admin/admin"
 import { Search } from "./search/search"
 import { Album } from "./album/album"
 import { Artist } from "./artist/artist"
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/admin",
+    element: <Admin />,
   },
   {
     path: "/search",

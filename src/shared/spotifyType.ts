@@ -50,3 +50,10 @@ export type SearchResponse = {
 export type ArtistAlbums = PaginatedData<Album>
 
 export type AlbumTracks = PaginatedData<Track>
+
+export type Device = {
+  id: string
+  is_active: boolean
+  name: string
+  type: string
+}

@@ -6,6 +6,7 @@ import searchReducer from "./search"
 import albumReducer from "./album"
 import artistReducer from "./artist"
 import playlistReducer from "./playlist"
+import deviceReducer from "./device"
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     album: albumReducer,
     artist: artistReducer,
     playlist: playlistReducer,
+    device: deviceReducer,
   },
 })
 

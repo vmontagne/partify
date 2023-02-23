@@ -3,6 +3,7 @@ import { DateTime } from "luxon"
 import {
   AlbumTracks,
   ArtistAlbums,
+  Device,
   SearchResponse,
 } from "../src/shared/spotifyType"
 
@@ -69,7 +70,10 @@ class Spotify {
     //TODO : re-call this function in 3500 sec -> TOKEN_DURATION - 100
   }
 
-  private async fetch<T>(path: string, params: RequestInit): Promise<T> {
+  private async fetch<T>(
+    path: string,
+    params: RequestInit
+  ): Promise<T | undefined> {
     await this.initialise()
 
     if (!params.headers) {
@@ -81,13 +85,17 @@ class Spotify {
 
     const response = await fetch("https://api.spotify.com/v1" + path, params)
 
-    if (response.status !== 200) {
+    if (!response.ok) {
       throw new Error("Can't query spotify data")
     }
 
-    const data = await response.json()
+    const contentType = response.headers.get("content-type")
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+      const data = await response.json()
+      return data
+    }
 
-    return data
+    return
   }
 
   async search(query: string): Promise<SearchResponse> {
@@ -99,6 +107,9 @@ class Spotify {
         }),
       { method: "GET" }
     )
+    if (!data) {
+      throw new Error("data not found")
+    }
     return data
   }
 
@@ -106,6 +117,9 @@ class Spotify {
     const data = await this.fetch<ArtistAlbums>(`/artists/${artistId}/albums`, {
       method: "GET",
     })
+    if (!data) {
+      throw new Error("data not found")
+    }
     return data
   }
 
@@ -113,7 +127,52 @@ class Spotify {
     const data = await this.fetch<AlbumTracks>(`/albums/${albumId}/tracks`, {
       method: "GET",
     })
+    if (!data) {
+      throw new Error("data not found")
+    }
     return data
+  }
+
+  async getDevices(): Promise<{ devices: Device[] }> {
+    const data = await this.fetch<{ devices: Device[] }>(`/me/player/devices`, {
+      method: "GET",
+    })
+    if (!data) {
+      throw new Error("data not found")
+    }
+    return data
+  }
+
+  async setDevice(deviceId: string): Promise<void> {
+    await this.fetch<{}>(`/me/player`, {
+      method: "PUT",
+      headers: new Headers({
+        "Content-Types": "application/json",
+      }),
+      body: JSON.stringify({ device_ids: [deviceId], play: false }),
+    })
+    return
+  }
+
+  async startPlayback(trackId?: string, position_ms?: number): Promise<void> {
+    await this.fetch<{}>(`/me/player/play`, {
+      method: "PUT",
+      headers: new Headers({
+        "Content-Types": "application/json",
+      }),
+      body: JSON.stringify({
+        uris: trackId ? [`spotify:track:${trackId}`] : undefined,
+        position_ms: position_ms || 0,
+      }),
+    })
+    return
+  }
+
+  async pausePlayback(): Promise<void> {
+    await this.fetch<{}>(`/me/player/pause`, {
+      method: "PUT",
+    })
+    return
   }
 }
 

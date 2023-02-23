@@ -3,6 +3,7 @@ import { Message, messageType } from "../shared/messages"
 import { useAppDispatch } from "../store"
 import { addTracks } from "../store/album"
 import { addAlbums } from "../store/artist"
+import { addDevices, getDevices } from "../store/device"
 import { setItems } from "../store/playlist"
 import { searchResponse } from "../store/search"
 import { setUuid } from "../store/user"
@@ -58,6 +59,15 @@ export const useServer = () => {
               items: data.items,
             })
           )
+          break
+        case messageType.ADMIN_GET_DEVICES_RESPONSE:
+          dispatch(
+            addDevices({
+              devices: data.devices,
+            })
+          )
+          break
+        case messageType.ADMIN_SET_DEVICE_RESPONSE:
           break
         default:
           console.log("message untreated", data)

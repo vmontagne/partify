@@ -1,5 +1,11 @@
 import { User, PlaylistItem } from "./common"
-import { AlbumTracks, ArtistAlbums, SearchResponse, Track } from "./spotifyType"
+import {
+  AlbumTracks,
+  ArtistAlbums,
+  Device,
+  SearchResponse,
+  Track,
+} from "./spotifyType"
 
 export enum messageType {
   GET_UUID = "GET_UUID",
@@ -17,8 +23,14 @@ export enum messageType {
   GET_ALBUM_TRACKS_RESPONSE = "GET_ALBUM_TRACKS_RESPONSE",
   GET_PLAYLIST_DATA = "PLAYLIST_DATA",
   PLAYLIST_DATA = "PLAYLIST_DATA",
-  ADMIN_SET_DEVICE = "ADMIN_SET_DEVICE",
-  ADMIN_DEVICE = "ADMIN_DEVICE",
+  ADMIN_SET_DEVICE_REQUEST = "ADMIN_SET_DEVICE_REQUEST",
+  ADMIN_SET_DEVICE_RESPONSE = "ADMIN_SET_DEVICE_RESPONSE",
+  ADMIN_GET_DEVICES_REQUEST = "ADMIN_GET_DEVICES_REQUEST",
+  ADMIN_GET_DEVICES_RESPONSE = "ADMIN_GET_DEVICES_RESPONSE",
+  ADMIN_START_PLAYBACK_REQUEST = "ADMIN_START_PLAYBACK_REQUEST",
+  ADMIN_START_PLAYBACK_RESPONSE = "ADMIN_START_PLAYBACK_RESPONSE",
+  ADMIN_PAUSE_PLAYBACK_REQUEST = "ADMIN_PAUSE_PLAYBACK_REQUEST",
+  ADMIN_PAUSE_PLAYBACK_RESPONSE = "ADMIN_PAUSE_PLAYBACK_RESPONSE",
 }
 
 export interface GetUuidMessage {
@@ -87,6 +99,46 @@ export interface PlaylistDataMessage {
   items: PlaylistItem[]
 }
 
+export interface AdminSetDeviceRequestMessage {
+  type: messageType.ADMIN_SET_DEVICE_REQUEST
+  deviceId: string
+}
+
+export interface AdminSetDeviceResponseMessage {
+  type: messageType.ADMIN_SET_DEVICE_RESPONSE
+  ok: boolean
+  message?: string
+}
+
+export interface AdminGetDevicesRequestMessage {
+  type: messageType.ADMIN_GET_DEVICES_REQUEST
+}
+
+export interface AdminGetDevicesResponseMessage {
+  type: messageType.ADMIN_GET_DEVICES_RESPONSE
+  devices: Device[]
+}
+
+export interface AdminStartPlaybackRequestMessage {
+  type: messageType.ADMIN_START_PLAYBACK_REQUEST
+}
+
+export interface AdminStartPlaybackResponseMessage {
+  type: messageType.ADMIN_START_PLAYBACK_RESPONSE
+  ok: boolean
+  message?: string
+}
+
+export interface AdminPausePlaybackRequestMessage {
+  type: messageType.ADMIN_PAUSE_PLAYBACK_REQUEST
+}
+
+export interface AdminPausePlaybackResponseMessage {
+  type: messageType.ADMIN_PAUSE_PLAYBACK_RESPONSE
+  ok: boolean
+  message?: string
+}
+
 export type Message =
   | GetUuidMessage
   | SetUuidMessage
@@ -100,3 +152,11 @@ export type Message =
   | GetAlbumTracksResponseMessage
   | AddSongRequestMessage
   | PlaylistDataMessage
+  | AdminSetDeviceRequestMessage
+  | AdminSetDeviceResponseMessage
+  | AdminGetDevicesRequestMessage
+  | AdminGetDevicesResponseMessage
+  | AdminStartPlaybackRequestMessage
+  | AdminStartPlaybackResponseMessage
+  | AdminPausePlaybackRequestMessage
+  | AdminPausePlaybackResponseMessage
