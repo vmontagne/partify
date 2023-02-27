@@ -3,6 +3,7 @@ import {
   AlbumTracks,
   ArtistAlbums,
   Device,
+  Playback,
   SearchResponse,
   Track,
 } from "./spotifyType"
@@ -31,6 +32,8 @@ export enum messageType {
   ADMIN_START_PLAYBACK_RESPONSE = "ADMIN_START_PLAYBACK_RESPONSE",
   ADMIN_PAUSE_PLAYBACK_REQUEST = "ADMIN_PAUSE_PLAYBACK_REQUEST",
   ADMIN_PAUSE_PLAYBACK_RESPONSE = "ADMIN_PAUSE_PLAYBACK_RESPONSE",
+  GET_PLAYBACK_STATE = "GET_PLAYBACK_STATE",
+  PLAYBACK_STATE = "PLAYBACK_STATE",
 }
 
 export interface GetUuidMessage {
@@ -139,6 +142,15 @@ export interface AdminPausePlaybackResponseMessage {
   message?: string
 }
 
+export interface GetPlaybackStateMessage {
+  type: messageType.GET_PLAYBACK_STATE
+}
+
+export interface PlaybackStateMessage {
+  type: messageType.PLAYBACK_STATE
+  playback: Playback
+}
+
 export type Message =
   | GetUuidMessage
   | SetUuidMessage
@@ -160,3 +172,5 @@ export type Message =
   | AdminStartPlaybackResponseMessage
   | AdminPausePlaybackRequestMessage
   | AdminPausePlaybackResponseMessage
+  | GetPlaybackStateMessage
+  | PlaybackStateMessage

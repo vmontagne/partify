@@ -3,7 +3,8 @@ import { Message, messageType } from "../shared/messages"
 import { useAppDispatch } from "../store"
 import { addTracks } from "../store/album"
 import { addAlbums } from "../store/artist"
-import { addDevices, getDevices } from "../store/device"
+import { addDevices } from "../store/device"
+import { set as setPlayback } from "../store/playback"
 import { setItems } from "../store/playlist"
 import { searchResponse } from "../store/search"
 import { setUuid } from "../store/user"
@@ -68,6 +69,13 @@ export const useServer = () => {
           )
           break
         case messageType.ADMIN_SET_DEVICE_RESPONSE:
+          break
+        case messageType.PLAYBACK_STATE:
+          dispatch(
+            setPlayback({
+              playback: data.playback,
+            })
+          )
           break
         default:
           console.log("message untreated", data)

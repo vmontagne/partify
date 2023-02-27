@@ -19,6 +19,12 @@ class Playlist {
 
   private sortItems() {
     this.playlistItems.sort((a, b) => {
+      if (a.locked) {
+        return -1
+      }
+      if (b.locked) {
+        return 1
+      }
       if (a.addedBy.length - b.addedBy.length !== 0) {
         return b.addedBy.length - a.addedBy.length
       }
@@ -52,6 +58,21 @@ class Playlist {
 
   public getItems(limit: number): PlaylistItem[] {
     return this.playlistItems.slice(0, limit)
+  }
+
+  public shift(): PlaylistItem {
+    const item = this.playlistItems.shift()
+    if (!item) {
+      throw new Error("Can't shift an empty playlist")
+    }
+    return item
+  }
+
+  public lockFirstItem(): void {
+    if (!this.playlistItems[0]) {
+      return
+    }
+    this.playlistItems[0].locked = true
   }
 }
 

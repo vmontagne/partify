@@ -57,3 +57,10 @@ export type Device = {
   name: string
   type: string
 }
+
+export type Playback = {
+  timestamp: number
+  progress_ms: number
+  is_playing: boolean
+  item: Track
+}

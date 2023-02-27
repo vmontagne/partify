@@ -10,4 +10,5 @@ export type PlaylistItem = {
   track: Track
   addedBy: User[]
   lastAdd: DateTime
+  locked?: boolean
 }

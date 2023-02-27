@@ -15,10 +15,12 @@ import {
   AdminSetDeviceResponseMessage,
   AdminStartPlaybackResponseMessage,
   AdminPausePlaybackResponseMessage,
+  PlaybackStateMessage,
 } from "../src/shared/messages"
 import { spotify } from "./spotify"
 import { playlist } from "./playlist"
-import { Track } from "../src/shared/spotifyType"
+import { Playback, Track } from "../src/shared/spotifyType"
+import { playback } from "./playback"
 
 const wss = new WebSocketServer({
   port: process.env.WSS_PORT ? parseInt(process.env.WSS_PORT) : 8080,
@@ -170,7 +172,7 @@ const addTrack = (ws: WebSocket, track: Track) => {
   })
 }
 
-const broadcastPlaylist = () => {
+export const broadcastPlaylist = () => {
   const items = playlist.getItems(10)
   const data: PlaylistDataMessage = {
     type: messageType.PLAYLIST_DATA,
@@ -204,13 +206,17 @@ const setDevices = async (ws: WebSocket, deviceId: string) => {
 }
 
 const startPlayback = async (ws: WebSocket) => {
-  // TODO get current playlist status to start the playback
   await spotify.startPlayback()
   const data: AdminStartPlaybackResponseMessage = {
     type: messageType.ADMIN_START_PLAYBACK_RESPONSE,
     ok: true,
   }
   ws.send(JSON.stringify(data))
+  setTimeout(async () => {
+    await playback.refreshPlayback()
+    broadcastPlayback()
+    broadcastPlaylist()
+  }, 1000)
 }
 
 const pausePlayback = async (ws: WebSocket) => {
@@ -220,6 +226,34 @@ const pausePlayback = async (ws: WebSocket) => {
     ok: true,
   }
   ws.send(JSON.stringify(data))
+  setTimeout(() => {
+    broadcastPlayback()
+  }, 1000)
+}
+
+export const broadcastPlayback = async () => {
+  const data = await playback.getCurrentPlayback()
+  const message: PlaybackStateMessage = {
+    type: messageType.PLAYBACK_STATE,
+    playback: data,
+  }
+  const encodedMessage = JSON.stringify(message)
+  wss.clients.forEach((client) => {
+    if (client.readyState !== WebSocket.OPEN) {
+      return
+    }
+    client.send(encodedMessage)
+  })
+}
+
+const getPlayback = async (ws: WebSocket) => {
+  const data = await playback.getCurrentPlayback()
+  const message: PlaybackStateMessage = {
+    type: messageType.PLAYBACK_STATE,
+    playback: data,
+  }
+
+  ws.send(JSON.stringify(message))
 }
 
 wss.on("connection", (ws: WebSocket) => {
@@ -262,6 +296,9 @@ wss.on("connection", (ws: WebSocket) => {
       case messageType.ADMIN_PAUSE_PLAYBACK_REQUEST:
         pausePlayback(ws)
         break
+      case messageType.GET_PLAYBACK_STATE:
+        getPlayback(ws)
+        break
       default:
         console.log("message unknown", json)
     }
@@ -270,6 +307,7 @@ wss.on("connection", (ws: WebSocket) => {
   // handling what to do when clients disconnects from server
   ws.on("close", () => {
     console.log("the client has disconnected")
+    //TODO : clean the clients array
   })
   // handling client connection error
   ws.onerror = function () {
