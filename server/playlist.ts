@@ -33,20 +33,20 @@ class Playlist {
   }
 
   public addTrack(track: Track, user: User) {
-    this.playlistItems.forEach((item) => {
-      if (item.track.id == track.id) {
-        if (
-          item.addedBy.findIndex((adder) => adder.uuid === user.uuid) !== -1
-        ) {
-          // this user already add this track so nothing happen ....
-          return
-        }
-        item.addedBy.push(user)
-        item.lastAdd = DateTime.now()
-        this.sortItems()
+    const trackIndex = this.playlistItems.findIndex(
+      (item) => item.track.id == track.id
+    )
+    if (trackIndex !== -1) {
+      const item = this.playlistItems[trackIndex]
+      if (item.addedBy.findIndex((adder) => adder.uuid === user.uuid) !== -1) {
+        // this user already add this track so nothing happen ....
         return
       }
-    })
+      item.addedBy.push(user)
+      item.lastAdd = DateTime.now()
+      this.sortItems()
+      return
+    }
 
     this.playlistItems.push({
       track,

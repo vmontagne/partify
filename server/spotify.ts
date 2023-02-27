@@ -22,7 +22,7 @@ class Spotify {
   private accessToken: string | undefined
   private tokenCreatedAt: DateTime | undefined = undefined
   TOKEN_DURATION: number = 3600
-  TRACK_ADDED_BEFORE_MS = 120000
+  TRACK_ADDED_BEFORE_MS = 10000
   private playbackTimeout?: NodeJS.Timeout
 
   constructor() {}

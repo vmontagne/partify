@@ -4,7 +4,9 @@ import Paper from "@mui/material/Paper"
 import Grid from "@mui/material/Unstable_Grid2"
 import { Image } from "../common/Image"
 import { PlaylistItem as PlaylistItemType } from "../shared/common"
-import { useAppSelector } from "../store"
+import { useAppDispatch, useAppSelector } from "../store"
+import { useEffect } from "react"
+import { getItems } from "../store/playlist"
 
 const Title = styled("p")(() => ({
   fontSize: "14px",
@@ -46,6 +48,10 @@ const PlaylistItem = ({ item }: { item: PlaylistItemType }) => {
 
 export const Playlist = () => {
   const { items } = useAppSelector((state) => state.playlist)
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    dispatch(getItems())
+  }, [])
   return (
     <Stack spacing={2}>
       {items.map((item) => (

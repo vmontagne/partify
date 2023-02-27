@@ -22,7 +22,7 @@ export enum messageType {
   GET_ARTIST_ALBUMS_RESPONSE = "GET_ARTIST_ALBUMS_RESPONSE",
   GET_ALBUM_TRACKS_REQUEST = "GET_ALBUM_TRACKS_REQUEST",
   GET_ALBUM_TRACKS_RESPONSE = "GET_ALBUM_TRACKS_RESPONSE",
-  GET_PLAYLIST_DATA = "PLAYLIST_DATA",
+  GET_PLAYLIST_DATA = "GET_PLAYLIST_DATA",
   PLAYLIST_DATA = "PLAYLIST_DATA",
   ADMIN_SET_DEVICE_REQUEST = "ADMIN_SET_DEVICE_REQUEST",
   ADMIN_SET_DEVICE_RESPONSE = "ADMIN_SET_DEVICE_RESPONSE",
@@ -163,6 +163,7 @@ export type Message =
   | GetAlbumTracksRequestMessage
   | GetAlbumTracksResponseMessage
   | AddSongRequestMessage
+  | GetPlaylistDataMessage
   | PlaylistDataMessage
   | AdminSetDeviceRequestMessage
   | AdminSetDeviceResponseMessage

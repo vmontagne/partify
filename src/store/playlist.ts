@@ -5,14 +5,12 @@ import { Track } from "../shared/spotifyType"
 import { PlaylistItem } from "../shared/common"
 
 interface Playlist {
-  currrent?: {
-    track: Track
-  }
+  loading: boolean
   items: PlaylistItem[]
 }
 
 const initialState: Playlist = {
-  currrent: undefined,
+  loading: false,
   items: [],
 }
 
@@ -26,20 +24,22 @@ export const playlistSlice = createSlice({
         track: action.payload,
       })
     },
+    getItems: (state) => {
+      state.loading = true
+      send({ type: messageType.GET_PLAYLIST_DATA })
+    },
     setItems: (
       state,
       action: PayloadAction<{
         items: PlaylistItem[]
       }>
     ) => {
+      state.loading = false
       state.items = action.payload.items
-    },
-    setCurent: (state) => {
-      console.log("coco")
     },
   },
 })
 
-export const { addTrack, setItems, setCurent } = playlistSlice.actions
+export const { addTrack, setItems, getItems } = playlistSlice.actions
 
 export default playlistSlice.reducer

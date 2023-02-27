@@ -7,6 +7,7 @@ import { getUuid } from "../store/user"
 import { NameDialog } from "./nameDialog"
 import { AddPlaylistItem } from "./addPlaylistItem"
 import { Playlist } from "./playlist"
+import { Playback } from "./playback"
 
 export const Home = () => {
   const { uuid, loading } = useAppSelector((state) => state.user)
@@ -24,6 +25,9 @@ export const Home = () => {
       </Grid>
       <Grid xs={12}>
         <AddPlaylistItem />
+      </Grid>
+      <Grid xs={12}>
+        <Playback />
       </Grid>
       <Grid xs={12}>
         <Playlist />

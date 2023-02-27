@@ -187,6 +187,15 @@ export const broadcastPlaylist = () => {
   })
 }
 
+const getPlaylist = async (ws: WebSocket) => {
+  const items = playlist.getItems(10)
+  const message: PlaylistDataMessage = {
+    type: messageType.PLAYLIST_DATA,
+    items,
+  }
+  ws.send(JSON.stringify(message))
+}
+
 const getDevices = async (ws: WebSocket) => {
   const { devices } = await spotify.getDevices()
   const data: AdminGetDevicesResponseMessage = {
@@ -212,11 +221,6 @@ const startPlayback = async (ws: WebSocket) => {
     ok: true,
   }
   ws.send(JSON.stringify(data))
-  setTimeout(async () => {
-    await playback.refreshPlayback()
-    broadcastPlayback()
-    broadcastPlaylist()
-  }, 1000)
 }
 
 const pausePlayback = async (ws: WebSocket) => {
@@ -298,6 +302,9 @@ wss.on("connection", (ws: WebSocket) => {
         break
       case messageType.GET_PLAYBACK_STATE:
         getPlayback(ws)
+        break
+      case messageType.GET_PLAYLIST_DATA:
+        getPlaylist(ws)
         break
       default:
         console.log("message unknown", json)

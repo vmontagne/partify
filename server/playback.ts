@@ -7,6 +7,7 @@ class Playback {
   private static instance?: Playback
   private state?: PlaybackType
   private refreshStateTimeout?: NodeJS.Timeout
+  private isLoading?: Promise<PlaybackType>
 
   constructor() {}
 
@@ -18,7 +19,11 @@ class Playback {
   }
 
   refreshPlayback = async (): Promise<PlaybackType> => {
-    const data = await spotify.getPlayback()
+    this.isLoading = new Promise(async (resolve) => {
+      const data = await spotify.getPlayback()
+      resolve(data)
+    })
+    const data = await this.isLoading
     this.state = {
       timestamp: data.timestamp,
       progress_ms: data.progress_ms,
@@ -47,6 +52,9 @@ class Playback {
   }
 
   getCurrentPlayback = async (): Promise<PlaybackType> => {
+    if (this.isLoading) {
+      await this.isLoading
+    }
     if (
       !this.state ||
       (this.state.is_playing &&
