@@ -31,7 +31,8 @@
     "ws": "^8.12.0"
   },
   "scripts": {
-    "build:server": "tsc --build tsconfig.server.json --verbose",
+    "build:server": "tsc -p tsconfig.server.json",
+    "start:server": "node server_build/server/server.js",
     "server": "nodemon server/server.ts",
     "server-static": "ts-node server/server.ts",
     "start": "react-scripts start",
