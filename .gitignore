@@ -11,6 +11,7 @@
 
 # production
 /build
+/server_build
 
 # misc
 .DS_Store
@@ -28,3 +29,4 @@ yarn-error.log*
 
 # local conf
 env.json
+server.json

@@ -8,8 +8,9 @@ import { set as setPlayback } from "../store/playback"
 import { setItems } from "../store/playlist"
 import { searchResponse } from "../store/search"
 import { setUuid } from "../store/user"
+import config from "../shared/config/server.json"
 
-let ws = new WebSocket("ws://localhost:8080")
+let ws = new WebSocket(`ws://${config.url}`)
 
 ws.addEventListener("error", () => {
   // TODO ask the user to do something instead of doing it alone ....
