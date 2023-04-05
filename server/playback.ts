@@ -69,8 +69,9 @@ class Playback {
       return this.state
     }
     if (
-      this.lastRefresh <
-        DateTime.now().plus({ milliseconds: SPOTIFY_API_LAG_MS }) ||
+      (this.lastRefresh <
+        DateTime.now().plus({ milliseconds: SPOTIFY_API_LAG_MS }) &&
+        !this.state) ||
       (this.state &&
         this.state.is_playing &&
         DateTime.fromMillis(
