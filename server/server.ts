@@ -23,7 +23,7 @@ import { Playback, Track } from "../src/shared/spotifyType"
 import { playback } from "./playback"
 
 const wss = new WebSocketServer({
-  port: process.env.WSS_PORT ? parseInt(process.env.WSS_PORT) : 8080,
+  port: process.env.WSS_PORT ? parseInt(process.env.WSS_PORT) : 8081,
   clientTracking: true,
 })
 
@@ -237,6 +237,9 @@ const pausePlayback = async (ws: WebSocket) => {
 
 export const broadcastPlayback = async () => {
   const data = await playback.getCurrentPlayback()
+  if (!data) {
+    return
+  }
   const message: PlaybackStateMessage = {
     type: messageType.PLAYBACK_STATE,
     playback: data,
@@ -252,6 +255,9 @@ export const broadcastPlayback = async () => {
 
 const getPlayback = async (ws: WebSocket) => {
   const data = await playback.getCurrentPlayback()
+  if (!data) {
+    return
+  }
   const message: PlaybackStateMessage = {
     type: messageType.PLAYBACK_STATE,
     playback: data,

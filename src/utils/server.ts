@@ -10,16 +10,32 @@ import { searchResponse } from "../store/search"
 import { setUuid } from "../store/user"
 import config from "../shared/config/server.json"
 
-let ws = new WebSocket(`ws://${config.url}`)
+let ws = new WebSocket(config.url)
 
-ws.addEventListener("error", () => {
-  // TODO ask the user to do something instead of doing it alone ....
-  setTimeout(() => window.location.reload(), 1000)
-})
+const reload = () => {
+  if (window.confirm("Une erreur est survenue")) {
+    window.location.reload()
+  } else {
+    window.location.reload()
+  }
+}
+
+ws.addEventListener("error", reload)
+ws.addEventListener("close", reload)
 
 export const isReady = () => ws.readyState === WebSocket.OPEN
 
-export const send = (message: Message) => {
+const waitUntilIsReady = new Promise<void>((resolve) => {
+  if (isReady()) {
+    return resolve()
+  }
+  ws.addEventListener("open", () => {
+    resolve()
+  })
+})
+
+export const send = async (message: Message) => {
+  await waitUntilIsReady
   ws.send(JSON.stringify(message))
 }
 

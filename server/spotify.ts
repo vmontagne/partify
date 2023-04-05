@@ -30,6 +30,7 @@ class Spotify {
   static getInstance() {
     if (!this.instance) {
       this.instance = new Spotify()
+      this.instance.refreshAccessToken()
     }
     return this.instance
   }
@@ -73,7 +74,10 @@ class Spotify {
     this.accessToken = data.access_token
     this.tokenCreatedAt = DateTime.now()
 
-    //TODO : re-call this function in 3500 sec -> TOKEN_DURATION - 100
+    setTimeout(
+      () => this.refreshAccessToken(),
+      (this.TOKEN_DURATION - 100) * 1000
+    )
   }
 
   private async fetch<T>(
@@ -88,6 +92,8 @@ class Spotify {
 
     //@ts-ignore 2339
     params.headers.set("Authorization", `Bearer ${this.accessToken}`)
+
+    console.log("call", path)
 
     const response = await fetch("https://api.spotify.com/v1" + path, params)
 
@@ -225,6 +231,9 @@ class Spotify {
     )
     // set a timeout to shift the playlist in x MS
     const currentState = await playback.getCurrentPlayback()
+    if (!currentState) {
+      return
+    }
     const trackStartedAt = DateTime.fromMillis(
       currentState.timestamp - currentState.progress_ms
     )

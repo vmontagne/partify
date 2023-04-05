@@ -24,6 +24,7 @@ class Playback {
       resolve(data)
     })
     const data = await this.isLoading
+    this.isLoading = undefined
     this.state = {
       timestamp: data.timestamp,
       progress_ms: data.progress_ms,
@@ -51,9 +52,10 @@ class Playback {
     return this.state
   }
 
-  getCurrentPlayback = async (): Promise<PlaybackType> => {
+  getCurrentPlayback = async (): Promise<PlaybackType | void> => {
     if (this.isLoading) {
       await this.isLoading
+      return
     }
     if (
       !this.state ||
