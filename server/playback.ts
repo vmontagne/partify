@@ -12,7 +12,11 @@ class Playback {
   private refreshStateTimeout?: NodeJS.Timeout
   private isLoading?: Promise<PlaybackType | void>
 
-  constructor() {}
+  constructor() {
+    this.lastRefresh = DateTime.now().minus({
+      milliseconds: SPOTIFY_API_LAG_MS,
+    })
+  }
 
   static getInstance() {
     if (!this.instance) {
