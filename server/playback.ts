@@ -9,7 +9,7 @@ class Playback {
   private static instance?: Playback
   private state?: PlaybackType
   private refreshStateTimeout?: NodeJS.Timeout
-  private isLoading?: Promise<PlaybackType>
+  private isLoading?: Promise<PlaybackType | void>
 
   constructor() {}
 
@@ -20,9 +20,12 @@ class Playback {
     return this.instance
   }
 
-  refreshPlayback = async (): Promise<PlaybackType> => {
-    this.isLoading = new Promise(async (resolve) => {
+  refreshPlayback = async (): Promise<PlaybackType | void> => {
+    this.isLoading = new Promise<PlaybackType | void>(async (resolve) => {
       const data = await spotify.getPlayback()
+      if (!data) {
+        return resolve()
+      }
       this.state = {
         timestamp: data.timestamp,
         progress_ms: data.progress_ms,
@@ -51,16 +54,12 @@ class Playback {
     const data = await this.isLoading
     this.isLoading = undefined
     broadcastPlayback()
-    // can't explain to ts after refreshPlayback, playback can't be undefined
-    //@ts-ignore 2339
     return this.state
   }
 
-  getCurrentPlayback = async (): Promise<PlaybackType> => {
+  getCurrentPlayback = async (): Promise<PlaybackType | void> => {
     if (this.isLoading) {
       await this.isLoading
-      // can't explain to ts after refreshPlayback, playback can't be undefined
-      //@ts-ignore 2339
       return this.state
     }
     if (
@@ -74,8 +73,6 @@ class Playback {
     ) {
       await this.refreshPlayback()
     }
-    // can't explain to ts after refreshPlayback, playback can't be undefined
-    //@ts-ignore 2339
     return this.state
   }
 

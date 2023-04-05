@@ -200,13 +200,10 @@ class Spotify {
     return
   }
 
-  async getPlayback(): Promise<Playback> {
+  async getPlayback(): Promise<Playback | undefined> {
     const data = await this.fetch<Playback>(`/me/player`, {
       method: "GET",
     })
-    if (!data) {
-      throw new Error("data not found")
-    }
     return data
   }
 
