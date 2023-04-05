@@ -6,6 +6,7 @@ import { broadcastPlayback } from "./server"
 const SPOTIFY_API_LAG_MS = 5000
 
 class Playback {
+  private lastRefresh: DateTime
   private static instance?: Playback
   private state?: PlaybackType
   private refreshStateTimeout?: NodeJS.Timeout
@@ -23,6 +24,7 @@ class Playback {
   refreshPlayback = async (): Promise<PlaybackType | void> => {
     this.isLoading = new Promise<PlaybackType | void>(async (resolve) => {
       const data = await spotify.getPlayback()
+      this.lastRefresh = DateTime.now()
       if (!data) {
         return resolve()
       }
@@ -63,8 +65,10 @@ class Playback {
       return this.state
     }
     if (
-      !this.state ||
-      (this.state.is_playing &&
+      this.lastRefresh <
+        DateTime.now().plus({ milliseconds: SPOTIFY_API_LAG_MS }) ||
+      (this.state &&
+        this.state.is_playing &&
         DateTime.fromMillis(
           this.state.timestamp +
             SPOTIFY_API_LAG_MS +
