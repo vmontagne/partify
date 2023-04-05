@@ -19,12 +19,16 @@ class Playback {
   }
 
   refreshPlayback = async (): Promise<PlaybackType> => {
+    console.log("call refresh")
     this.isLoading = new Promise(async (resolve) => {
       const data = await spotify.getPlayback()
       resolve(data)
     })
+    console.log("await data")
     const data = await this.isLoading
+    console.log("data received")
     this.isLoading = undefined
+    console.log("update state")
     this.state = {
       timestamp: data.timestamp,
       progress_ms: data.progress_ms,
@@ -48,15 +52,20 @@ class Playback {
           ?.url,
       },
     }
+    console.log("broadcast")
     broadcastPlayback()
     return this.state
   }
 
   getCurrentPlayback = async (): Promise<PlaybackType | void> => {
+    console.log("get current playback")
     if (this.isLoading) {
+      console.log("loading -> before")
       await this.isLoading
+      console.log("loading -> done")
       return
     }
+    console.log("check if need refresh")
     if (
       !this.state ||
       (this.state.is_playing &&
@@ -65,8 +74,10 @@ class Playback {
             (this.state.item.duration_ms - this.state.progress_ms)
         ) < DateTime.now())
     ) {
+      console.log("refresh")
       await this.refreshPlayback()
     }
+    console.log("return state")
     // can't explain to ts after refreshPlayback, playback can't be undefined
     //@ts-ignore 2339
     return this.state
