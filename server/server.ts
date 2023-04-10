@@ -215,7 +215,7 @@ const setDevices = async (ws: WebSocket, deviceId: string) => {
 }
 
 const startPlayback = async (ws: WebSocket) => {
-  await spotify.startPlayback()
+  await playback.startPlayback()
   const data: AdminStartPlaybackResponseMessage = {
     type: messageType.ADMIN_START_PLAYBACK_RESPONSE,
     ok: true,

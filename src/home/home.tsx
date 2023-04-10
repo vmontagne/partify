@@ -20,9 +20,7 @@ export const Home = () => {
   }, [uuid, loading, dispatch])
   return (
     <Grid container spacing={2}>
-      <Grid xs={12}>
-        <NameDialog />
-      </Grid>
+      <Grid xs={12}>{/* <NameDialog /> */}</Grid>
       <Grid xs={12}>
         <AddPlaylistItem />
       </Grid>

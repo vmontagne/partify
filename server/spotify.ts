@@ -9,12 +9,11 @@ import {
 } from "../src/shared/spotifyType"
 
 import config from "../env.json"
-import { playlist } from "./playlist"
-import { playback } from "./playback"
-import { broadcastPlaylist } from "./server"
 
 const client_id = config.spotify.clientId
 const client_secret = config.spotify.clientSecret
+
+export const SPOTIFY_API_LAG_MS = 5000
 
 class Spotify {
   private static instance: Spotify | undefined
@@ -22,8 +21,6 @@ class Spotify {
   private accessToken: string | undefined
   private tokenCreatedAt: DateTime | undefined = undefined
   TOKEN_DURATION: number = 3600
-  TRACK_ADDED_BEFORE_MS = 10000
-  private playbackTimeout?: NodeJS.Timeout
 
   constructor() {}
 
@@ -80,10 +77,7 @@ class Spotify {
     )
   }
 
-  private async fetch<T>(
-    path: string,
-    params: RequestInit
-  ): Promise<T | undefined> {
+  async fetch<T>(path: string, params: RequestInit): Promise<T | undefined> {
     await this.initialise()
 
     if (!params.headers) {
@@ -169,31 +163,7 @@ class Spotify {
     return
   }
 
-  async startPlayback(): Promise<void> {
-    const playlistItem = playlist.shift()
-    await this.fetch<{}>(`/me/player/play`, {
-      method: "PUT",
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
-      body: JSON.stringify({
-        uris: [`spotify:track:${playlistItem.track.id}`],
-        position_ms: 0,
-      }),
-    })
-    this.playbackTimeout = setTimeout(
-      () => this.addTrack(),
-      playlistItem.track.duration_ms - this.TRACK_ADDED_BEFORE_MS
-    )
-    broadcastPlaylist()
-    playback.refreshPlaybackIn(1000)
-    return
-  }
-
   async pausePlayback(): Promise<void> {
-    if (this.playbackTimeout) {
-      clearTimeout(this.playbackTimeout)
-    }
     await this.fetch<{}>(`/me/player/pause`, {
       method: "PUT",
     })
@@ -205,48 +175,6 @@ class Spotify {
       method: "GET",
     })
     return data
-  }
-
-  async addTrack(): Promise<void> {
-    // add the track to spotify
-    playlist.lockFirstItem()
-    const items = playlist.getItems(1)
-    if (items.length !== 1) {
-      throw new Error("No items in the playlist")
-    }
-    this.fetch<{}>(
-      `/me/player/queue?` +
-        new URLSearchParams({
-          uri: `spotify:track:${items[0].track.id}`,
-        }),
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json",
-        }),
-      }
-    )
-    // set a timeout to shift the playlist in x MS
-    const currentState = await playback.getCurrentPlayback()
-    if (!currentState) {
-      return
-    }
-    const trackStartedAt = DateTime.fromMillis(
-      currentState.timestamp - currentState.progress_ms
-    )
-    const trackEndInMs =
-      currentState.item.duration_ms -
-      DateTime.now().diff(trackStartedAt).milliseconds
-    currentState.timestamp + currentState.progress_ms
-    setTimeout(() => {
-      playlist.shift()
-      broadcastPlaylist()
-    }, trackEndInMs)
-    playback.refreshPlaybackIn(trackEndInMs + 1000)
-    this.playbackTimeout = setTimeout(
-      () => this.addTrack(),
-      trackEndInMs + items[0].track.duration_ms - this.TRACK_ADDED_BEFORE_MS
-    )
   }
 }
 
