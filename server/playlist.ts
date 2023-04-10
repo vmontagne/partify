@@ -28,7 +28,7 @@ class Playlist {
       if (a.addedBy.length - b.addedBy.length !== 0) {
         return b.addedBy.length - a.addedBy.length
       }
-      return a.lastAdd > b.lastAdd ? -1 : 1
+      return a.lastAdd < b.lastAdd ? -1 : 1
     })
   }
 

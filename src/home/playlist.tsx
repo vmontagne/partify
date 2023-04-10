@@ -2,6 +2,8 @@ import { Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
 import Paper from "@mui/material/Paper"
 import Grid from "@mui/material/Unstable_Grid2"
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt"
+import Badge from "@mui/material/Badge"
 import { Image } from "../common/Image"
 import { PlaylistItem as PlaylistItemType } from "../shared/common"
 import { useAppDispatch, useAppSelector } from "../store"
@@ -35,12 +37,18 @@ const PlaylistItem = ({ item }: { item: PlaylistItemType }) => {
             {item.track.artists.map((artist) => artist.name).join()}
           </Artist>
         </Grid>
-        <Grid
-          xs={2}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        ></Grid>
+        <Grid xs={2} display="flex" alignItems="center" justifyContent="center">
+          <Badge
+            badgeContent={item.addedBy.length}
+            color="success"
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+          >
+            <ThumbUpAltIcon />
+          </Badge>
+        </Grid>
       </Grid>
     </Paper>
   )
