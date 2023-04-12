@@ -8,6 +8,7 @@ import artistReducer from "./artist"
 import playlistReducer from "./playlist"
 import deviceReducer from "./device"
 import playbackReducer from "./playback"
+import adminPlaylistReducer from "./adminPlaylist"
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     playlist: playlistReducer,
     device: deviceReducer,
     playback: playbackReducer,
+    adminPlaylist: adminPlaylistReducer,
   },
 })
 

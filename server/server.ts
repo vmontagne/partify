@@ -16,10 +16,12 @@ import {
   AdminStartPlaybackResponseMessage,
   AdminPausePlaybackResponseMessage,
   PlaybackStateMessage,
+  AdminPlaylistsResponseMessage,
+  AdminAddPlaylistResponseMessage,
 } from "../src/shared/messages"
 import { spotify } from "./spotify"
 import { playlist } from "./playlist"
-import { Playback, Track } from "../src/shared/spotifyType"
+import { PlaylistTrack, Track } from "../src/shared/spotifyType"
 import { playback } from "./playback"
 
 const wss = new WebSocketServer({
@@ -266,6 +268,72 @@ const getPlayback = async (ws: WebSocket) => {
   ws.send(JSON.stringify(message))
 }
 
+const getPlaylists = async (ws: WebSocket) => {
+  const data = await spotify.getPlaylists()
+  if (!data) {
+    return
+  }
+  const playlists = {
+    offset: data.offset,
+    total: data.total,
+    items: data.items.map((item) => ({
+      id: item.id,
+      name: item.name,
+    })),
+  }
+  const message: AdminPlaylistsResponseMessage = {
+    type: messageType.ADMIN_PLAYLISTS_RESPONSE,
+    playlists,
+  }
+
+  ws.send(JSON.stringify(message))
+}
+
+const addPlaylist = async (ws: WebSocket, id: string) => {
+  let tracks: PlaylistTrack[] = []
+  let limit = 1
+  while (tracks.length < limit) {
+    const data = await spotify.getPlaylistItems(id, tracks.length)
+    if (!data) {
+      return
+    }
+    limit = data.total
+    tracks = [...tracks, ...data.items]
+  }
+
+  for (let i = 0; i < tracks.length; i++) {
+    const track = tracks[i].track
+    await playlist.addTrack(
+      {
+        id: track.id,
+        album: track.album
+          ? {
+              id: track.album?.id,
+              name: track.album?.name,
+              artists: [],
+            }
+          : undefined,
+        artists: track.artists.map((artist) => ({
+          id: artist.id,
+          name: artist.name,
+        })),
+        name: track.name,
+        duration_ms: track.duration_ms,
+        image: track.album?.images?.sort((a, b) => b.width - a.width)[0]?.url,
+      },
+      undefined,
+      true
+    )
+  }
+
+  const message: AdminAddPlaylistResponseMessage = {
+    type: messageType.ADMIN_ADD_PLAYLIST_RESPONSE,
+    ok: true,
+  }
+
+  ws.send(JSON.stringify(message))
+}
+
 wss.on("connection", (ws: WebSocket) => {
   console.log("new client connected")
 
@@ -311,6 +379,12 @@ wss.on("connection", (ws: WebSocket) => {
         break
       case messageType.GET_PLAYLIST_DATA:
         getPlaylist(ws)
+        break
+      case messageType.ADMIN_GET_PLAYLISTS:
+        getPlaylists(ws)
+        break
+      case messageType.ADMIN_ADD_PLAYLIST:
+        addPlaylist(ws, json.playlistId)
         break
       default:
         console.log("message unknown", json)

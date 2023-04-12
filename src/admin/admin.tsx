@@ -2,6 +2,7 @@ import Grid from "@mui/material/Unstable_Grid2"
 
 import { Devices } from "./devices"
 import { Playback } from "./playback"
+import { Playlists } from "./playlists"
 
 export const Admin = () => {
   return (
@@ -12,6 +13,9 @@ export const Admin = () => {
       </Grid>
       <Grid xs={12}>
         <Playback />
+      </Grid>
+      <Grid xs={12}>
+        <Playlists />
       </Grid>
     </Grid>
   )

@@ -6,6 +6,7 @@ import {
   Playback,
   SearchResponse,
   Track,
+  Playlists,
 } from "./spotifyType"
 
 export enum messageType {
@@ -34,6 +35,10 @@ export enum messageType {
   ADMIN_PAUSE_PLAYBACK_RESPONSE = "ADMIN_PAUSE_PLAYBACK_RESPONSE",
   GET_PLAYBACK_STATE = "GET_PLAYBACK_STATE",
   PLAYBACK_STATE = "PLAYBACK_STATE",
+  ADMIN_GET_PLAYLISTS = "ADMIN_GET_PLAYLISTS",
+  ADMIN_PLAYLISTS_RESPONSE = "ADMIN_PLAYLISTS_RESPONSE",
+  ADMIN_ADD_PLAYLIST = "ADMIN_ADD_PLAYLIST",
+  ADMIN_ADD_PLAYLIST_RESPONSE = "ADMIN_ADD_PLAYLIST_RESPONSE",
 }
 
 export interface GetUuidMessage {
@@ -151,6 +156,26 @@ export interface PlaybackStateMessage {
   playback: Playback
 }
 
+export interface AdminGetPlaylistsMessage {
+  type: messageType.ADMIN_GET_PLAYLISTS
+}
+
+export interface AdminPlaylistsResponseMessage {
+  type: messageType.ADMIN_PLAYLISTS_RESPONSE
+  playlists: Playlists
+}
+
+export interface AdminAddPlaylistMessage {
+  type: messageType.ADMIN_ADD_PLAYLIST
+  playlistId: string
+}
+
+export interface AdminAddPlaylistResponseMessage {
+  type: messageType.ADMIN_ADD_PLAYLIST_RESPONSE
+  ok: boolean
+  message?: string
+}
+
 export type Message =
   | GetUuidMessage
   | SetUuidMessage
@@ -175,3 +200,7 @@ export type Message =
   | AdminPausePlaybackResponseMessage
   | GetPlaybackStateMessage
   | PlaybackStateMessage
+  | AdminGetPlaylistsMessage
+  | AdminPlaylistsResponseMessage
+  | AdminAddPlaylistMessage
+  | AdminAddPlaylistResponseMessage

@@ -1,6 +1,9 @@
 import { DateTime } from "luxon"
 import { User, PlaylistItem } from "../src/shared/common"
 import { Track } from "../src/shared/spotifyType"
+import fs from "fs/promises"
+
+const FILE_STORAGE = "./playlist.json"
 
 class Playlist {
   private static instance: Playlist | undefined
@@ -10,9 +13,31 @@ class Playlist {
     this.playlistItems = []
   }
 
+  private async storePlaylist() {
+    console.log("write file")
+    const data = JSON.stringify(this.playlistItems)
+    await fs.writeFile(FILE_STORAGE, data)
+    JSON.parse(data)
+    console.log("data written")
+  }
+
+  private async loadPlaylist() {
+    let loadedData: string | undefined = undefined
+    try {
+      loadedData = await fs.readFile(FILE_STORAGE, "utf-8")
+    } catch (e) {
+      return
+    }
+    if (!loadedData) {
+      return
+    }
+    this.playlistItems = JSON.parse(loadedData)
+  }
+
   static getInstance() {
     if (!this.instance) {
       this.instance = new Playlist()
+      this.instance.loadPlaylist()
     }
     return this.instance
   }
@@ -32,28 +57,49 @@ class Playlist {
     })
   }
 
-  public addTrack(track: Track, user: User) {
+  public async addTrack(track: Track, user?: User, sync?: boolean) {
     const trackIndex = this.playlistItems.findIndex(
       (item) => item.track.id == track.id
     )
     if (trackIndex !== -1) {
       const item = this.playlistItems[trackIndex]
-      if (item.addedBy.findIndex((adder) => adder.uuid === user.uuid) !== -1) {
+      if (
+        user &&
+        item.addedBy.findIndex((adder) => adder.uuid === user.uuid) !== -1
+      ) {
         // this user already add this track so nothing happen ....
         return
       }
-      item.addedBy.push(user)
+      if (user) {
+        item.addedBy.push(user)
+      }
       item.lastAdd = DateTime.now()
       this.sortItems()
+      if (sync) {
+        await this.storePlaylist()
+      } else {
+        this.storePlaylist()
+      }
       return
     }
 
-    this.playlistItems.push({
+    const item: PlaylistItem = {
       track,
-      addedBy: [user],
+      addedBy: [],
       lastAdd: DateTime.now(),
-    })
+    }
+
+    if (user) {
+      item.addedBy.push(user)
+    }
+
+    this.playlistItems.push(item)
     this.sortItems()
+    if (sync) {
+      await this.storePlaylist()
+    } else {
+      this.storePlaylist()
+    }
   }
 
   public getItems(limit: number): PlaylistItem[] {
@@ -65,6 +111,7 @@ class Playlist {
     if (!item) {
       throw new Error("Can't shift an empty playlist")
     }
+    this.storePlaylist()
     return item
   }
 
@@ -72,6 +119,7 @@ class Playlist {
     if (!this.playlistItems[0]) {
       return
     }
+    this.storePlaylist()
     this.playlistItems[0].locked = true
   }
 }

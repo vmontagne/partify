@@ -23,6 +23,7 @@ const Artist = styled("p")(() => ({
 }))
 
 const PlaylistItem = ({ item }: { item: PlaylistItemType }) => {
+  console.log(item)
   return (
     <Paper>
       <Grid container>
@@ -34,7 +35,7 @@ const PlaylistItem = ({ item }: { item: PlaylistItemType }) => {
         <Grid xs>
           <Title>{item.track.name}</Title>
           <Artist>
-            {item.track.artists.map((artist) => artist.name).join()}
+            {item.track.artists.map((artist) => artist.name).join(", ")}
           </Artist>
         </Grid>
         <Grid xs={2} display="flex" alignItems="center" justifyContent="center">

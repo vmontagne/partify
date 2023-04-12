@@ -30,3 +30,6 @@ yarn-error.log*
 # local conf
 env.json
 server.json
+
+# storage
+playlist.json

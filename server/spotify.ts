@@ -5,6 +5,8 @@ import {
   ArtistAlbums,
   Device,
   Playback,
+  Playlists,
+  PlaylistTracks,
   SearchResponse,
 } from "../src/shared/spotifyType"
 
@@ -174,6 +176,26 @@ class Spotify {
     const data = await this.fetch<Playback>(`/me/player`, {
       method: "GET",
     })
+    return data
+  }
+
+  async getPlaylists(): Promise<Playlists> {
+    const data = await this.fetch<Playlists>(`/me/playlists`, {
+      method: "GET",
+    })
+    if (!data) {
+      throw new Error("data not found")
+    }
+    return data
+  }
+
+  async getPlaylistItems(id: string, offset = 0): Promise<PlaylistTracks> {
+    const data = await this.fetch<PlaylistTracks>(`/playlists/${id}/tracks`, {
+      method: "GET",
+    })
+    if (!data) {
+      throw new Error("data not found")
+    }
     return data
   }
 }

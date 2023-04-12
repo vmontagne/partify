@@ -47,9 +47,22 @@ export type SearchResponse = {
   albums: PaginatedData<Album>
 }
 
+export type Playlist = {
+  id: string
+  name: string
+}
+
+export type PlaylistTrack = {
+  track: Track
+}
+
+export type Playlists = PaginatedData<Playlist>
+
 export type ArtistAlbums = PaginatedData<Album>
 
 export type AlbumTracks = PaginatedData<Track>
+
+export type PlaylistTracks = PaginatedData<PlaylistTrack>
 
 export type Device = {
   id: string

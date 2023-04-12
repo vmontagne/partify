@@ -9,6 +9,7 @@ import { setItems } from "../store/playlist"
 import { searchResponse } from "../store/search"
 import { setUuid } from "../store/user"
 import config from "../shared/config/server.json"
+import { addPlaylists } from "../store/adminPlaylist"
 
 let ws = new WebSocket(config.url)
 
@@ -91,6 +92,13 @@ export const useServer = () => {
           dispatch(
             setPlayback({
               playback: data.playback,
+            })
+          )
+          break
+        case messageType.ADMIN_PLAYLISTS_RESPONSE:
+          dispatch(
+            addPlaylists({
+              playlists: data.playlists.items,
             })
           )
           break
