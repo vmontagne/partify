@@ -341,58 +341,62 @@ wss.on("connection", (ws: WebSocket) => {
 
   //on message from client
   ws.on("message", (data) => {
-    const json: Message = JSON.parse(data.toString())
-    switch (json.type) {
-      case messageType.GET_UUID:
-        getUuid(ws, json)
-        break
-      case messageType.REASSIGN_UUID_REQUEST:
-        reassingUuid(ws, json)
-        break
-      case messageType.SEARCH_REQUEST:
-        searchRequest(ws, json.query)
-        break
-      case messageType.GET_ARTIST_ALBUMS_REQUEST:
-        getArtistAlbums(ws, json.artistId)
-        break
-      case messageType.GET_ALBUM_TRACKS_REQUEST:
-        getAlbumTracks(ws, json.albumId)
-        break
-      case messageType.GET_ALBUM_TRACKS_REQUEST:
-        getAlbumTracks(ws, json.albumId)
-        break
-      case messageType.ADD_SONG_REQUEST:
-        addTrack(ws, json.track)
-        break
-      case messageType.ADMIN_GET_DEVICES_REQUEST:
-        getDevices(ws)
-        break
-      case messageType.ADMIN_SET_DEVICE_REQUEST:
-        setDevices(ws, json.deviceId)
-        break
-      case messageType.ADMIN_START_PLAYBACK_REQUEST:
-        startPlayback(ws)
-        break
-      case messageType.ADMIN_PAUSE_PLAYBACK_REQUEST:
-        pausePlayback(ws)
-        break
-      case messageType.GET_PLAYBACK_STATE:
-        getPlayback(ws)
-        break
-      case messageType.GET_PLAYLIST_DATA:
-        getPlaylist(ws)
-        break
-      case messageType.ADMIN_GET_PLAYLISTS:
-        getPlaylists(ws)
-        break
-      case messageType.ADMIN_ADD_PLAYLIST:
-        addPlaylist(ws, json.playlistId)
-        break
-      case messageType.ADMIN_LOGIN:
-        login(json.code)
-        break
-      default:
-        console.log("message unknown", json)
+    try {
+      const json: Message = JSON.parse(data.toString())
+      switch (json.type) {
+        case messageType.GET_UUID:
+          getUuid(ws, json)
+          break
+        case messageType.REASSIGN_UUID_REQUEST:
+          reassingUuid(ws, json)
+          break
+        case messageType.SEARCH_REQUEST:
+          searchRequest(ws, json.query)
+          break
+        case messageType.GET_ARTIST_ALBUMS_REQUEST:
+          getArtistAlbums(ws, json.artistId)
+          break
+        case messageType.GET_ALBUM_TRACKS_REQUEST:
+          getAlbumTracks(ws, json.albumId)
+          break
+        case messageType.GET_ALBUM_TRACKS_REQUEST:
+          getAlbumTracks(ws, json.albumId)
+          break
+        case messageType.ADD_SONG_REQUEST:
+          addTrack(ws, json.track)
+          break
+        case messageType.ADMIN_GET_DEVICES_REQUEST:
+          getDevices(ws)
+          break
+        case messageType.ADMIN_SET_DEVICE_REQUEST:
+          setDevices(ws, json.deviceId)
+          break
+        case messageType.ADMIN_START_PLAYBACK_REQUEST:
+          startPlayback(ws)
+          break
+        case messageType.ADMIN_PAUSE_PLAYBACK_REQUEST:
+          pausePlayback(ws)
+          break
+        case messageType.GET_PLAYBACK_STATE:
+          getPlayback(ws)
+          break
+        case messageType.GET_PLAYLIST_DATA:
+          getPlaylist(ws)
+          break
+        case messageType.ADMIN_GET_PLAYLISTS:
+          getPlaylists(ws)
+          break
+        case messageType.ADMIN_ADD_PLAYLIST:
+          addPlaylist(ws, json.playlistId)
+          break
+        case messageType.ADMIN_LOGIN:
+          login(json.code)
+          break
+        default:
+          console.log("message unknown", json)
+      }
+    } catch (e) {
+      console.log("an error occured", e)
     }
   })
 

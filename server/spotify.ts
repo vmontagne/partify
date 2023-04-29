@@ -22,7 +22,7 @@ export const SPOTIFY_API_LAG_MS = 5000
 
 class Spotify {
   private static instance: Spotify | undefined
-  private refreshToken: string
+  private refreshToken: string = ""
   private accessToken: string | undefined
   private tokenCreatedAt: DateTime | undefined = undefined
   TOKEN_DURATION: number = 3600
@@ -55,7 +55,9 @@ class Spotify {
   }
 
   async initialise() {
-    await Spotify.getRefreshToken()
+    if (this.refreshToken.length < 1) {
+      await Spotify.getRefreshToken()
+    }
     if (!this.tokenIsValid()) {
       await this.refreshAccessToken()
     }
@@ -112,6 +114,10 @@ class Spotify {
     const data = await response.json()
 
     this.accessToken = data.access_token
+    setTimeout(
+      () => this.refreshAccessToken(),
+      (this.TOKEN_DURATION - 100) * 1000
+    )
   }
 
   async fetch<T>(path: string, params: RequestInit): Promise<T | undefined> {
