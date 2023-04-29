@@ -22,7 +22,7 @@ export const SPOTIFY_API_LAG_MS = 5000
 
 class Spotify {
   private static instance: Spotify | undefined
-  private refreshToken: string = refresh_token
+  private refreshToken: string
   private accessToken: string | undefined
   private tokenCreatedAt: DateTime | undefined = undefined
   TOKEN_DURATION: number = 3600
@@ -55,6 +55,7 @@ class Spotify {
   }
 
   async initialise() {
+    await Spotify.getRefreshToken()
     if (!this.tokenIsValid()) {
       await this.refreshAccessToken()
     }
@@ -233,6 +234,5 @@ class Spotify {
     return data
   }
 }
-const refresh_token = await Spotify.getRefreshToken()
 
 export const spotify = Spotify.getInstance()
