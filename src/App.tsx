@@ -27,7 +27,7 @@ const router = createBrowserRouter([
     element: <LoginCallback />,
   },
   {
-    path: "/admin",
+    path: "/987nimda",
     element: <Admin />,
   },
   {

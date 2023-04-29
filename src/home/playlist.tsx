@@ -23,7 +23,6 @@ const Artist = styled("p")(() => ({
 }))
 
 const PlaylistItem = ({ item }: { item: PlaylistItemType }) => {
-  console.log(item)
   return (
     <Paper>
       <Grid container>

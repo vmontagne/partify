@@ -40,7 +40,7 @@ class Spotify {
   static getInstance() {
     if (!this.instance) {
       this.instance = new Spotify()
-      this.instance.refreshAccessToken()
+      // this.instance.refreshAccessToken()
     }
     return this.instance
   }
@@ -56,7 +56,7 @@ class Spotify {
 
   async initialise() {
     if (this.refreshToken.length < 1) {
-      await Spotify.getRefreshToken()
+      this.refreshToken = await Spotify.getRefreshToken()
     }
     if (!this.tokenIsValid()) {
       await this.refreshAccessToken()
@@ -87,10 +87,9 @@ class Spotify {
     this.accessToken = data.access_token
     this.tokenCreatedAt = DateTime.now()
 
-    setTimeout(
-      () => this.refreshAccessToken(),
-      (this.TOKEN_DURATION - 100) * 1000
-    )
+    setTimeout(() => {
+      this.refreshAccessToken
+    }, (this.TOKEN_DURATION - 100) * 1000)
   }
 
   async login(code: string): Promise<void> {
@@ -114,10 +113,8 @@ class Spotify {
     const data = await response.json()
 
     this.accessToken = data.access_token
-    setTimeout(
-      () => this.refreshAccessToken(),
-      (this.TOKEN_DURATION - 100) * 1000
-    )
+    Spotify.setRefreshToken(data.refresh_token)
+    setTimeout(this.refreshAccessToken, (this.TOKEN_DURATION - 100) * 1000)
   }
 
   async fetch<T>(path: string, params: RequestInit): Promise<T | undefined> {
@@ -130,7 +127,7 @@ class Spotify {
     //@ts-ignore 2339
     params.headers.set("Authorization", `Bearer ${this.accessToken}`)
 
-    console.log("call", path)
+    // console.log("call", path)
 
     const response = await fetch("https://api.spotify.com/v1" + path, params)
 

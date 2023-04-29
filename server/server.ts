@@ -1,4 +1,4 @@
-import { WebSocketServer, WebSocket } from "ws"
+import { WebSocketServer, WebSocket, RawData } from "ws"
 import { v4 as uuidv4 } from "uuid"
 import {
   Message,
@@ -334,70 +334,75 @@ const addPlaylist = async (ws: WebSocket, id: string) => {
   ws.send(JSON.stringify(message))
 }
 
-const login = (code: string): void => {}
+const login = async (code: string): Promise<void> => {
+  await spotify.login(code)
+}
+
+const processMessage = async (ws: WebSocket, data: RawData): Promise<void> => {
+  try {
+    const json: Message = JSON.parse(data.toString())
+    switch (json.type) {
+      case messageType.GET_UUID:
+        getUuid(ws, json)
+        break
+      case messageType.REASSIGN_UUID_REQUEST:
+        reassingUuid(ws, json)
+        break
+      case messageType.SEARCH_REQUEST:
+        await searchRequest(ws, json.query)
+        break
+      case messageType.GET_ARTIST_ALBUMS_REQUEST:
+        await getArtistAlbums(ws, json.artistId)
+        break
+      case messageType.GET_ALBUM_TRACKS_REQUEST:
+        await getAlbumTracks(ws, json.albumId)
+        break
+      case messageType.GET_ALBUM_TRACKS_REQUEST:
+        await getAlbumTracks(ws, json.albumId)
+        break
+      case messageType.ADD_SONG_REQUEST:
+        addTrack(ws, json.track)
+        break
+      case messageType.ADMIN_GET_DEVICES_REQUEST:
+        await getDevices(ws)
+        break
+      case messageType.ADMIN_SET_DEVICE_REQUEST:
+        await setDevices(ws, json.deviceId)
+        break
+      case messageType.ADMIN_START_PLAYBACK_REQUEST:
+        await startPlayback(ws)
+        break
+      case messageType.ADMIN_PAUSE_PLAYBACK_REQUEST:
+        await pausePlayback(ws)
+        break
+      case messageType.GET_PLAYBACK_STATE:
+        await getPlayback(ws)
+        break
+      case messageType.GET_PLAYLIST_DATA:
+        await getPlaylist(ws)
+        break
+      case messageType.ADMIN_GET_PLAYLISTS:
+        await getPlaylists(ws)
+        break
+      case messageType.ADMIN_ADD_PLAYLIST:
+        await addPlaylist(ws, json.playlistId)
+        break
+      case messageType.ADMIN_LOGIN:
+        await login(json.code)
+        break
+      default:
+    }
+  } catch (e) {
+    console.log("an exception occured", e)
+  }
+}
 
 wss.on("connection", (ws: WebSocket) => {
   console.log("new client connected")
 
   //on message from client
   ws.on("message", (data) => {
-    try {
-      const json: Message = JSON.parse(data.toString())
-      switch (json.type) {
-        case messageType.GET_UUID:
-          getUuid(ws, json)
-          break
-        case messageType.REASSIGN_UUID_REQUEST:
-          reassingUuid(ws, json)
-          break
-        case messageType.SEARCH_REQUEST:
-          searchRequest(ws, json.query)
-          break
-        case messageType.GET_ARTIST_ALBUMS_REQUEST:
-          getArtistAlbums(ws, json.artistId)
-          break
-        case messageType.GET_ALBUM_TRACKS_REQUEST:
-          getAlbumTracks(ws, json.albumId)
-          break
-        case messageType.GET_ALBUM_TRACKS_REQUEST:
-          getAlbumTracks(ws, json.albumId)
-          break
-        case messageType.ADD_SONG_REQUEST:
-          addTrack(ws, json.track)
-          break
-        case messageType.ADMIN_GET_DEVICES_REQUEST:
-          getDevices(ws)
-          break
-        case messageType.ADMIN_SET_DEVICE_REQUEST:
-          setDevices(ws, json.deviceId)
-          break
-        case messageType.ADMIN_START_PLAYBACK_REQUEST:
-          startPlayback(ws)
-          break
-        case messageType.ADMIN_PAUSE_PLAYBACK_REQUEST:
-          pausePlayback(ws)
-          break
-        case messageType.GET_PLAYBACK_STATE:
-          getPlayback(ws)
-          break
-        case messageType.GET_PLAYLIST_DATA:
-          getPlaylist(ws)
-          break
-        case messageType.ADMIN_GET_PLAYLISTS:
-          getPlaylists(ws)
-          break
-        case messageType.ADMIN_ADD_PLAYLIST:
-          addPlaylist(ws, json.playlistId)
-          break
-        case messageType.ADMIN_LOGIN:
-          login(json.code)
-          break
-        default:
-          console.log("message unknown", json)
-      }
-    } catch (e) {
-      console.log("an error occured", e)
-    }
+    processMessage(ws, data)
   })
 
   // handling what to do when clients disconnects from server
@@ -410,3 +415,5 @@ wss.on("connection", (ws: WebSocket) => {
     console.log("Some Error occurred")
   }
 })
+
+console.log("server started")

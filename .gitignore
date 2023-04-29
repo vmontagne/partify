@@ -33,3 +33,4 @@ server.json
 
 # storage
 playlist.json
+refreshToken.txt

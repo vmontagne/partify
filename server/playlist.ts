@@ -14,11 +14,9 @@ class Playlist {
   }
 
   private async storePlaylist() {
-    console.log("write file")
     const data = JSON.stringify(this.playlistItems)
     await fs.writeFile(FILE_STORAGE, data)
     JSON.parse(data)
-    console.log("data written")
   }
 
   private async loadPlaylist() {

@@ -21,7 +21,7 @@ class Playback {
   static getInstance() {
     if (!this.instance) {
       this.instance = new Playback()
-      this.instance.refreshPlayback()
+      // this.instance.refreshPlayback()
     }
     return this.instance
   }
