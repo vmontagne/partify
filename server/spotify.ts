@@ -1,4 +1,5 @@
 import { DateTime } from "luxon"
+import fs from "fs/promises"
 
 import {
   AlbumTracks,
@@ -12,6 +13,8 @@ import {
 
 import config from "../env.json"
 
+const REFRESH_TOKEN_FILE = "./refreshToken.txt"
+const REDIRECT_URI = "https://partify.clemence-et-valentin.fr/login_callback"
 const client_id = config.spotify.clientId
 const client_secret = config.spotify.clientSecret
 
@@ -19,12 +22,20 @@ export const SPOTIFY_API_LAG_MS = 5000
 
 class Spotify {
   private static instance: Spotify | undefined
-  private refreshToken: string = config.spotify.refreshToken
+  private refreshToken: string = refresh_token
   private accessToken: string | undefined
   private tokenCreatedAt: DateTime | undefined = undefined
   TOKEN_DURATION: number = 3600
 
   constructor() {}
+
+  static async setRefreshToken(refreshToken: string): Promise<void> {
+    await fs.writeFile(REFRESH_TOKEN_FILE, refreshToken)
+  }
+
+  static async getRefreshToken(): Promise<string> {
+    return await fs.readFile(REFRESH_TOKEN_FILE, "utf-8")
+  }
 
   static getInstance() {
     if (!this.instance) {
@@ -77,6 +88,29 @@ class Spotify {
       () => this.refreshAccessToken(),
       (this.TOKEN_DURATION - 100) * 1000
     )
+  }
+
+  async login(code: string): Promise<void> {
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        Authorization:
+          "Basic " +
+          Buffer.from(client_id + ":" + client_secret).toString("base64"),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        grant_type: "authorization_code",
+        code: code,
+        redirect_uri: REDIRECT_URI,
+      }),
+    })
+    if (response.status !== 200) {
+      throw new Error("Can't login")
+    }
+    const data = await response.json()
+
+    this.accessToken = data.access_token
   }
 
   async fetch<T>(path: string, params: RequestInit): Promise<T | undefined> {
@@ -199,5 +233,6 @@ class Spotify {
     return data
   }
 }
+const refresh_token = await Spotify.getRefreshToken()
 
 export const spotify = Spotify.getInstance()

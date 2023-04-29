@@ -39,6 +39,7 @@ export enum messageType {
   ADMIN_PLAYLISTS_RESPONSE = "ADMIN_PLAYLISTS_RESPONSE",
   ADMIN_ADD_PLAYLIST = "ADMIN_ADD_PLAYLIST",
   ADMIN_ADD_PLAYLIST_RESPONSE = "ADMIN_ADD_PLAYLIST_RESPONSE",
+  ADMIN_LOGIN = "ADMIN_LOGIN",
 }
 
 export interface GetUuidMessage {
@@ -176,6 +177,11 @@ export interface AdminAddPlaylistResponseMessage {
   message?: string
 }
 
+export interface AdminLoginMessage {
+  type: messageType.ADMIN_LOGIN
+  code: string
+}
+
 export type Message =
   | GetUuidMessage
   | SetUuidMessage
@@ -204,3 +210,4 @@ export type Message =
   | AdminPlaylistsResponseMessage
   | AdminAddPlaylistMessage
   | AdminAddPlaylistResponseMessage
+  | AdminLoginMessage

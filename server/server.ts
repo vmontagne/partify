@@ -334,6 +334,8 @@ const addPlaylist = async (ws: WebSocket, id: string) => {
   ws.send(JSON.stringify(message))
 }
 
+const login = (code: string): void => {}
+
 wss.on("connection", (ws: WebSocket) => {
   console.log("new client connected")
 
@@ -385,6 +387,9 @@ wss.on("connection", (ws: WebSocket) => {
         break
       case messageType.ADMIN_ADD_PLAYLIST:
         addPlaylist(ws, json.playlistId)
+        break
+      case messageType.ADMIN_LOGIN:
+        login(json.code)
         break
       default:
         console.log("message unknown", json)
