@@ -1,4 +1,5 @@
 import { WebSocketServer, WebSocket, RawData } from "ws"
+import * as Sentry from "@sentry/node"
 import { v4 as uuidv4 } from "uuid"
 import {
   Message,
@@ -23,6 +24,15 @@ import { spotify } from "./spotify"
 import { playlist } from "./playlist"
 import { PlaylistTrack, Track } from "../src/shared/spotifyType"
 import { playback } from "./playback"
+
+Sentry.init({
+  dsn: "https://44ce513e3c2048a881a2097d61dc8acc@o4505109859336192.ingest.sentry.io/4505109862023168",
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+})
 
 const wss = new WebSocketServer({
   port: process.env.WSS_PORT ? parseInt(process.env.WSS_PORT) : 8081,
@@ -393,6 +403,7 @@ const processMessage = async (ws: WebSocket, data: RawData): Promise<void> => {
       default:
     }
   } catch (e) {
+    Sentry.captureException(e)
     console.log("an exception occured", e)
   }
 }
@@ -411,9 +422,15 @@ wss.on("connection", (ws: WebSocket) => {
     //TODO : clean the clients array
   })
   // handling client connection error
-  ws.onerror = function () {
-    console.log("Some Error occurred")
-  }
+  ws.on("error", (error: Error) => {
+    Sentry.captureException(error)
+    console.log("Some Error on the server")
+  })
+
+  ws.on("wsClientError", (error) => {
+    Sentry.captureException(error)
+    console.log("Some wsClientError on the server")
+  })
 })
 
 console.log("server started")

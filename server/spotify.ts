@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node"
 import { DateTime } from "luxon"
 import fs from "fs/promises"
 
@@ -22,12 +23,15 @@ export const SPOTIFY_API_LAG_MS = 5000
 
 class Spotify {
   private static instance: Spotify | undefined
+  private refreshTried: number
   private refreshToken: string = ""
   private accessToken: string | undefined
   private tokenCreatedAt: DateTime | undefined = undefined
   TOKEN_DURATION: number = 3600
 
-  constructor() {}
+  constructor() {
+    this.refreshTried = 0
+  }
 
   static async setRefreshToken(refreshToken: string): Promise<void> {
     await fs.writeFile(REFRESH_TOKEN_FILE, refreshToken)
@@ -79,8 +83,18 @@ class Spotify {
     })
 
     if (response.status !== 200) {
-      throw new Error("Can't refresh spotify token")
+      if (this.refreshTried > 10) {
+        // if we retried already 10 times why rellay throw the error
+        new Error("Can't refresh spotify token")
+      }
+      this.refreshTried++
+      Sentry.captureException(new Error("Can't refresh spotify token"))
+      setTimeout(() => {
+        this.refreshAccessToken
+      }, 1000)
+      return
     }
+    this.refreshTried = 0
 
     const data = await response.json()
 
