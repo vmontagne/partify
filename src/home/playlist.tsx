@@ -8,7 +8,7 @@ import { Image } from "../common/Image"
 import { PlaylistItem as PlaylistItemType } from "../shared/common"
 import { useAppDispatch, useAppSelector } from "../store"
 import { useEffect } from "react"
-import { getItems } from "../store/playlist"
+import { getItems, addTrack } from "../store/playlist"
 
 const Title = styled("p")(() => ({
   fontSize: "14px",
@@ -23,9 +23,13 @@ const Artist = styled("p")(() => ({
 }))
 
 const PlaylistItem = ({ item }: { item: PlaylistItemType }) => {
+  const dispatch = useAppDispatch()
+  const handleUpVote = () => {
+    dispatch(addTrack(item.track))
+  }
   return (
     <Paper>
-      <Grid container>
+      <Grid container onClick={handleUpVote}>
         {item.track.image && (
           <Grid xs={2} display="flex" alignItems="center">
             <Image src={item.track.image} />
