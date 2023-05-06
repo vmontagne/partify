@@ -6,7 +6,7 @@ import PlayCircleIcon from "@mui/icons-material/PlayCircle"
 import PauseCircleIcon from "@mui/icons-material/PauseCircle"
 import { useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "../store"
-import { get as getPlayback, togglePlay } from "../store/playback"
+import { get as getPlayback, startPlay } from "../store/playback"
 
 const Title = styled("p")(({ theme }) => ({
   fontSize: "20px",
@@ -21,22 +21,16 @@ export const Playback = () => {
   useEffect(() => {
     dispatch(getPlayback())
   }, [])
-  const handleTooglePlay = () => {
-    dispatch(togglePlay())
+  const handleStartPlay = () => {
+    dispatch(startPlay())
   }
   console.log("is_playing", playback?.is_playing)
   return (
     <Stack spacing={2}>
-      <Title>Playback</Title>
+      <Title>Current playback state</Title>
       {!playback && <CircularProgress />}
       {playback && (
-        <Grid
-          xs
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          onClick={handleTooglePlay}
-        >
+        <Grid xs display="flex" alignItems="center" justifyContent="center">
           {playback.is_playing ? (
             <PauseCircleIcon fontSize="large" />
           ) : (
@@ -44,6 +38,16 @@ export const Playback = () => {
           )}
         </Grid>
       )}
+      <Title>Set playback state</Title>
+      <Grid
+        xs
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        onClick={handleStartPlay}
+      >
+        <PlayCircleIcon fontSize="large" />
+      </Grid>
     </Stack>
   )
 }

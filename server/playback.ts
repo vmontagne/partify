@@ -2,6 +2,7 @@ import { spotify, SPOTIFY_API_LAG_MS } from "./spotify"
 import { Playback as PlaybackType, Track } from "../src/shared/spotifyType"
 import { DateTime } from "luxon"
 import { broadcastPlayback, broadcastPlaylist } from "./server"
+import * as Sentry from "@sentry/node"
 
 import { playlist } from "./playlist"
 
@@ -117,21 +118,32 @@ class Playback {
       throw new Error("No items in the playlist")
     }
     const newTrack = items[0]
-    spotify.fetch<{}>(
-      `/me/player/queue?` +
-        new URLSearchParams({
-          uri: `spotify:track:${newTrack.track.id}`,
-        }),
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json",
-        }),
-      }
-    )
+    try {
+      spotify.fetch<{}>(
+        `/me/player/queue?` +
+          new URLSearchParams({
+            uri: `spotify:track:${newTrack.track.id}`,
+          }),
+        {
+          method: "POST",
+          headers: new Headers({
+            "Content-Type": "application/json",
+          }),
+        }
+      )
+    } catch (e: unknown) {
+      Sentry.captureException(e)
+      playlist.shift()
+      setTimeout(() => {
+        this.addTrack()
+      }, 500)
+    }
     // set a timeout to shift the playlist in x MS
     const currentState = await playback.getCurrentPlayback()
     if (!currentState) {
+      Sentry.captureMessage(
+        "Can't get the current playback while try to add a new track"
+      )
       return
     }
     const trackStartedAt = DateTime.fromMillis(
