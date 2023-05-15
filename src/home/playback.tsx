@@ -51,38 +51,37 @@ export const Playback = () => {
       clearInterval(timer)
     }
   }, [playback?.progress_ms, playback?.timestamp, playback?.item.duration_ms])
+  if (!playback) {
+    return null
+  }
   return (
     <Paper>
-      {playback ? (
-        <Grid container>
-          {playback.item.image && (
-            <Grid xs={2} display="flex" alignItems="center">
-              <Image src={playback.item.image} />
-            </Grid>
-          )}
-          <Grid xs>
-            <Title>{playback.item.name}</Title>
-            <Artist>
-              {playback.item.artists.map((artist) => artist.name).join()}
-            </Artist>
+      <Grid container>
+        {playback.item.image && (
+          <Grid xs={2} display="flex" alignItems="center">
+            <Image src={playback.item.image} />
           </Grid>
-          <Grid
-            xs={2}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          ></Grid>
-          <Grid xs={12}>
-            <LinearProgress
-              variant="determinate"
-              value={progress}
-              color="success"
-            />
-          </Grid>
+        )}
+        <Grid xs>
+          <Title>{playback.item.name}</Title>
+          <Artist>
+            {playback.item.artists.map((artist) => artist.name).join()}
+          </Artist>
         </Grid>
-      ) : (
-        <CircularProgress />
-      )}
+        <Grid
+          xs={2}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        ></Grid>
+        <Grid xs={12}>
+          <LinearProgress
+            variant="determinate"
+            value={progress}
+            color="success"
+          />
+        </Grid>
+      </Grid>
     </Paper>
   )
 }
