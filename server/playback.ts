@@ -110,6 +110,13 @@ class Playback {
     return
   }
 
+  async goToNext(): Promise<void> {
+    if (this.playbackTimeout) {
+      clearTimeout(this.playbackTimeout)
+    }
+    await this.startPlayback()
+  }
+
   async addTrack(): Promise<void> {
     // add the track to spotify
     playlist.lockFirstItem()

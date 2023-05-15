@@ -27,16 +27,18 @@ export const playbackSlice = createSlice({
       state.playback = action.payload.playback
     },
     startPlay: (state) => {
-      if (!state.playback) {
-        return
-      }
       send({
         type: messageType.ADMIN_START_PLAYBACK_REQUEST,
+      })
+    },
+    goToNextTrack: (state) => {
+      send({
+        type: messageType.GO_TO_NEXT_MUSIC,
       })
     },
   },
 })
 
-export const { set, get, startPlay } = playbackSlice.actions
+export const { set, get, startPlay, goToNextTrack } = playbackSlice.actions
 
 export default playbackSlice.reducer

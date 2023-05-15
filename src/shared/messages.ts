@@ -40,6 +40,8 @@ export enum messageType {
   ADMIN_ADD_PLAYLIST = "ADMIN_ADD_PLAYLIST",
   ADMIN_ADD_PLAYLIST_RESPONSE = "ADMIN_ADD_PLAYLIST_RESPONSE",
   ADMIN_LOGIN = "ADMIN_LOGIN",
+  GO_TO_NEXT_MUSIC = "GO_TO_NEXT_MUSIC",
+  DELETE_TRACK = "DELETE_TRACK",
 }
 
 export interface GetUuidMessage {
@@ -182,6 +184,15 @@ export interface AdminLoginMessage {
   code: string
 }
 
+export interface GoToNextMusicMessage {
+  type: messageType.GO_TO_NEXT_MUSIC
+}
+
+export interface DeleteTrackMessage {
+  type: messageType.DELETE_TRACK
+  id: string
+}
+
 export type Message =
   | GetUuidMessage
   | SetUuidMessage
@@ -211,3 +222,5 @@ export type Message =
   | AdminAddPlaylistMessage
   | AdminAddPlaylistResponseMessage
   | AdminLoginMessage
+  | GoToNextMusicMessage
+  | DeleteTrackMessage

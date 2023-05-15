@@ -120,6 +120,14 @@ class Playlist {
     this.storePlaylist()
     this.playlistItems[0].locked = true
   }
+
+  public deleteTrack(id: string): void {
+    const index = this.playlistItems.findIndex((item) => item.track.id === id)
+    if (!index) {
+      return
+    }
+    this.playlistItems.splice(index, 1)
+  }
 }
 
 export const playlist = Playlist.getInstance()

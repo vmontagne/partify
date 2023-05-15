@@ -348,6 +348,14 @@ const login = async (code: string): Promise<void> => {
   await spotify.login(code)
 }
 
+const goToNext = async (): Promise<void> => {
+  await playback.goToNext()
+}
+
+const deleteTrack = (id: string): void => {
+  playlist.deleteTrack(id)
+}
+
 const processMessage = async (ws: WebSocket, data: RawData): Promise<void> => {
   try {
     const json: Message = JSON.parse(data.toString())
@@ -399,6 +407,12 @@ const processMessage = async (ws: WebSocket, data: RawData): Promise<void> => {
         break
       case messageType.ADMIN_LOGIN:
         await login(json.code)
+        break
+      case messageType.GO_TO_NEXT_MUSIC:
+        await goToNext()
+        break
+      case messageType.DELETE_TRACK:
+        deleteTrack(json.id)
         break
       default:
     }
