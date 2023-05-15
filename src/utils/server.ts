@@ -14,7 +14,11 @@ import { addPlaylists } from "../store/adminPlaylist"
 let ws = new WebSocket(config.url)
 
 const reload = () => {
-  if (window.confirm("Une erreur est survenue")) {
+  if (
+    window.confirm(
+      "Vous avez étez déconnecté, cliquez sur un bouton pour recharger la page"
+    )
+  ) {
     window.location.reload()
   } else {
     window.location.reload()

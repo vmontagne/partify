@@ -10,6 +10,7 @@ import { Artist } from "./artist/artist"
 import { useServer } from "./utils/server"
 import "./App.css"
 import { LoginCallback } from "./loginCallback/loginCallback"
+import { AdminPlaylist } from "./adminPlaylist/adminPlaylist"
 
 const darkTheme = createTheme({
   palette: {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
   {
     path: "/987nimda",
     element: <Admin />,
+  },
+  {
+    path: "/987nimda/playlist",
+    element: <AdminPlaylist />,
   },
   {
     path: "/search",

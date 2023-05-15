@@ -37,9 +37,13 @@ export const playlistSlice = createSlice({
       state.loading = false
       state.items = action.payload.items
     },
+    deleteItem: (state, action: PayloadAction<{ id: string }>) => {
+      send({ type: messageType.DELETE_TRACK, id: action.payload.id })
+    },
   },
 })
 
-export const { addTrack, setItems, getItems } = playlistSlice.actions
+export const { addTrack, setItems, getItems, deleteItem } =
+  playlistSlice.actions
 
 export default playlistSlice.reducer

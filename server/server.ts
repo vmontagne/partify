@@ -354,6 +354,7 @@ const goToNext = async (): Promise<void> => {
 
 const deleteTrack = (id: string): void => {
   playlist.deleteTrack(id)
+  broadcastPlaylist()
 }
 
 const processMessage = async (ws: WebSocket, data: RawData): Promise<void> => {
