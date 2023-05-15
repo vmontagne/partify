@@ -11,6 +11,7 @@ import { useServer } from "./utils/server"
 import "./App.css"
 import { LoginCallback } from "./loginCallback/loginCallback"
 import { AdminPlaylist } from "./adminPlaylist/adminPlaylist"
+import { FullScreen } from "./fullScreen/fullScreen"
 
 const darkTheme = createTheme({
   palette: {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/fullscreen",
+    element: <FullScreen />,
   },
   {
     path: "/login_callback",
